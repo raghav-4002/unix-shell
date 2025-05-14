@@ -9,6 +9,7 @@ kill(const char *error_msg)
     exit(1);
 }
 
+
 int
 main(void)
 {
@@ -23,4 +24,6 @@ main(void)
 
         fputs(line, stdout);
     }
+
+    return EXIT_SUCCESS;
 }
