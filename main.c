@@ -1,12 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 
 void
-kill(const char *error_msg)
+die(const char *error_msg)
 {
     perror(error_msg);
     exit(1);
+}
+
+
+void
+execute_command(char *line)
+{
+    char *args[] = {line, NULL};
+    execvp(args[0], args);
 }
 
 
@@ -15,14 +24,19 @@ main(void)
 {
     char *line = NULL;
     size_t n = 0;
+    ssize_t line_len;
 
     /* repeatedly take input */
     while(1) {
-        printf("csh> ");
+        printf("seash> ");
 
-        if(getline(&line, &n, stdin) == -1) kill("getline");
+        if((line_len = getline(&line, &n, stdin)) == -1)
+            die("getline");
 
-        fputs(line, stdout);
+        // basic parsing
+        line[line_len - 1] = '\0';
+
+        execute_command(line);
     }
 
     return EXIT_SUCCESS;
