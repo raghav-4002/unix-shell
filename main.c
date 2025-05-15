@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 
 void
@@ -14,8 +16,14 @@ die(const char *error_msg)
 void
 execute_command(char *line)
 {
-    char *args[] = {line, NULL};
-    execvp(args[0], args);
+    pid_t pid = fork();
+
+    if(pid == 0) {
+        char *args[] = {line, NULL};
+        execvp(args[0], args);
+    } else {
+        wait(NULL);
+    }
 }
 
 
