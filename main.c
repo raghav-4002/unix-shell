@@ -3,7 +3,7 @@
 
 
 char *
-accept_line(void)
+read_input(void)
 {
     char *line = NULL;
     size_t n = 0;
@@ -28,7 +28,10 @@ main(void)
         line = NULL;
 
         printf("seash> ");
-        line = accept_line();
+        line = read_input();
+
+        /* free the memory allocated by read_input function */
+        free(line);
     }
 
     return EXIT_SUCCESS;
