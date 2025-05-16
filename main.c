@@ -9,29 +9,39 @@ read_input(void)
     size_t n = 0;
     ssize_t line_len;
 
-    /* input line */
+    /* read input line */
     line_len = getline(&line, &n, stdin);
 
-    /* add null byte at the end */
+    /* add null byte at the end, in place of newline */
     line[line_len - 1] = '\0';
 
     return line;
 }
 
 
+char **
+tokenize_input(char *input)
+{
+    
+}
+
+
 int
 main(void)
 {
-    char *line;
+    char *input;
+    char **tokens;
 
     while(1) {
-        line = NULL;
+        input = NULL;
+        tokens = NULL;
 
         printf("seash> ");
-        line = read_input();
+        input = read_input();
+        tokens = tokenize_input(input);
 
         /* free the memory allocated by read_input function */
-        free(line);
+        free(input);
     }
 
     return EXIT_SUCCESS;
