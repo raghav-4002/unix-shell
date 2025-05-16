@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 char *
@@ -22,7 +23,13 @@ read_input(void)
 char **
 tokenize_input(char *input)
 {
-    
+    char *string = input;
+    char *token = NULL;
+
+    token = strtok(string, " ");
+    while(token != NULL) {
+        token = strtok(NULL, " ");
+    }
 }
 
 
