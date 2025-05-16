@@ -1,51 +1,28 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#include <stdio.h>
 
 
 void
-die(const char *error_msg)
+accept_line(void)
 {
-    perror(error_msg);
-    exit(1);
-}
+    char *line = NULL;
+    size_t n = 0;
+    ssize_t line_len;
 
+    /* input line */
+    line_len = getline(&line, &n, stdin);
 
-void
-execute_command(char *line)
-{
-    pid_t pid = fork();
-
-    if(pid == 0) {
-        char *args[] = {line, NULL};
-        execvp(args[0], args);
-        exit(EXIT_SUCCESS);
-    } else {
-        wait(NULL);
-    }
+    /* add null byte at the end */
+    line[line_len - 1] = '\0';
 }
 
 
 int
 main(void)
 {
-    char *line = NULL;
-    size_t n = 0;
-    ssize_t line_len;
-
-    /* repeatedly take input */
     while(1) {
         printf("seash> ");
-
-        if((line_len = getline(&line, &n, stdin)) == -1)
-            die("getline");
-
-        // basic parsing
-        line[line_len - 1] = '\0';
-
-        execute_command(line);
+        accept_line();
     }
 
     return EXIT_SUCCESS;
