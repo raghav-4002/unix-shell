@@ -21,6 +21,7 @@ execute_command(char *line)
     if(pid == 0) {
         char *args[] = {line, NULL};
         execvp(args[0], args);
+        exit(EXIT_SUCCESS);
     } else {
         wait(NULL);
     }
