@@ -25,10 +25,25 @@ tokenize_input(char *input)
 {
     char *string = input;
     char *token = NULL;
+    char **token_array = NULL;
+    int token_count = 0;
+
 
     token = strtok(string, " ");
-    while(token != NULL) {
+
+    token_count++;
+    token_array = realloc(token_array, token_count * sizeof(*token_array));
+    token_array[token_count - 1] = malloc(strlen(token) + 1);
+    memcpy(token_array[token_count - 1], token, strlen(token) + 1);
+
+    while(1) {
         token = strtok(NULL, " ");
+        if(token == NULL) break;
+
+        token_count++;
+        token_array = realloc(token_array, token_count * sizeof(*token_array));
+        token_array[token_count - 1] = malloc(strlen(token) + 1);
+        memcpy(token_array[token_count - 1], token, strlen(token) + 1);
     }
 }
 
