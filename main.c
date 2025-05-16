@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 
-void
+char *
 accept_line(void)
 {
     char *line = NULL;
@@ -14,15 +14,21 @@ accept_line(void)
 
     /* add null byte at the end */
     line[line_len - 1] = '\0';
+
+    return line;
 }
 
 
 int
 main(void)
 {
+    char *line;
+
     while(1) {
+        line = NULL;
+
         printf("seash> ");
-        accept_line();
+        line = accept_line();
     }
 
     return EXIT_SUCCESS;
