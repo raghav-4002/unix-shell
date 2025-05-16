@@ -3,6 +3,21 @@
 #include <string.h>
 
 
+void
+free_memory(char *input, char **tokens, int token_count)
+{
+    /* free memory allocated by 'read_input' */
+    free(input);
+
+    /* free memory allocated by 'tokenize_input */
+    for(int i = 0; i < token_count; i++) {
+        free(tokens[i]);
+    }
+
+    free(tokens);
+}
+
+
 char *
 read_input(void)
 {
@@ -21,30 +36,36 @@ read_input(void)
 
 
 char **
-tokenize_input(char *input)
+tokenize_input(char *input, int *token_count)
 {
-    char *string = input;
-    char *token = NULL;
-    char **token_array = NULL;
-    int token_count = 0;
+    char *string = input;       /* the string to tokenize */
+    char *token = NULL;         /* the individual token*/
+    char **token_array = NULL;  /* all the tokens to return */
+    *token_count = 0;           /* total number of tokens */
 
 
     token = strtok(string, " ");
 
-    token_count++;
-    token_array = realloc(token_array, token_count * sizeof(*token_array));
-    token_array[token_count - 1] = malloc(strlen(token) + 1);
-    memcpy(token_array[token_count - 1], token, strlen(token) + 1);
+    /* increment token count */
+    *token_count = *token_count + 1;
+    /* allocate memory to array */
+    token_array = realloc(token_array, *token_count * sizeof(*token_array));
+    /* allocate memory to store the string(token) */
+    token_array[*token_count - 1] = malloc(strlen(token) + 1);
+    /* move the contents of 'token' to the array of arrays */
+    memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
 
     while(1) {
         token = strtok(NULL, " ");
-        if(token == NULL) break;
+        if(token == NULL) break;            /* tokenization is complete */
 
-        token_count++;
-        token_array = realloc(token_array, token_count * sizeof(*token_array));
-        token_array[token_count - 1] = malloc(strlen(token) + 1);
-        memcpy(token_array[token_count - 1], token, strlen(token) + 1);
+        *token_count = *token_count + 1;
+        token_array = realloc(token_array, *token_count * sizeof(*token_array));
+        token_array[*token_count - 1] = malloc(strlen(token) + 1);
+        memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
     }
+
+    return token_array;
 }
 
 
@@ -53,6 +74,7 @@ main(void)
 {
     char *input;
     char **tokens;
+    int token_count;
 
     while(1) {
         input = NULL;
@@ -60,10 +82,10 @@ main(void)
 
         printf("seash> ");
         input = read_input();
-        tokens = tokenize_input(input);
+        tokens = tokenize_input(input, &token_count);
 
         /* free the memory allocated by read_input function */
-        free(input);
+        free_memory(input, tokens, token_count);
     }
 
     return EXIT_SUCCESS;
