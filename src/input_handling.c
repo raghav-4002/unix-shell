@@ -1,24 +1,8 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <stdlib.h>
 
-
-void
-free_memory(char *input, char **tokens, int token_count)
-{
-    /* free memory allocated by 'read_input' */
-    free(input);
-
-    /* free memory allocated by 'tokenize_input */
-    for(int i = 0; i < token_count; i++) {
-        free(tokens[i]);
-    }
-
-    free(tokens);
-}
+#include "input_handling.h"
 
 
 char *
@@ -31,7 +15,7 @@ read_input(void)
     /* read input line */
     line_len = getline(&line, &n, stdin);
 
-    /* add null byte at the end, in place of newline */
+    /* add null byte at the end */
     line[line_len - 1] = '\0';
 
     return line;
@@ -69,50 +53,4 @@ tokenize_input(char *input, int *token_count)
     }
 
     return token_array;
-}
-
-
-void
-execute_command(char **tokens)
-{
-    execvp(tokens[0], tokens);
-}
-
-
-void
-hanlde_command(char **tokens)
-{
-    /* create a child process */
-    pid_t pid = fork();
-
-    if(pid == 0) {
-        execute_command(tokens);
-    } else {
-        wait(NULL);
-    }
-}
-
-
-int
-main(void)
-{
-    char *input;
-    char **tokens;
-    int token_count;
-
-    while(1) {
-        input = NULL;
-        tokens = NULL;
-
-        printf("seash> ");
-        input = read_input();
-        tokens = tokenize_input(input, &token_count);
-
-        hanlde_command(tokens);
-
-        /* free the memory allocated by read_input function */
-        free_memory(input, tokens, token_count);
-    }
-
-    return EXIT_SUCCESS;
 }
