@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "input_handling.h"
+#include "command_handling.h"
 
 
 void
@@ -25,27 +26,6 @@ free_memory(char *input, char **tokens, int token_count)
 }
 
 
-void
-execute_command(char **tokens)
-{
-    execvp(tokens[0], tokens);
-}
-
-
-void
-hanlde_command(char **tokens)
-{
-    /* create a child process */
-    pid_t pid = fork();
-
-    if(pid == 0) {
-        execute_command(tokens);
-    } else {
-        wait(NULL);
-    }
-}
-
-
 int
 main(void)
 {
@@ -58,7 +38,7 @@ main(void)
         input = read_input();
         tokens = tokenize_input(input, &token_count);
 
-        hanlde_command(tokens);
+        handle_command(tokens);
 
         /* free the memory allocated by read_input function */
         free_memory(input, tokens, token_count);
