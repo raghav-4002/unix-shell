@@ -52,5 +52,10 @@ tokenize_input(char *input, int *token_count)
         memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
     }
 
+    /* append with NULL at the end of array */
+    *token_count = *token_count + 1;
+    token_array = realloc(token_array, *token_count * sizeof(*token_array));
+    token_array[*token_count - 1] = NULL; 
+
     return token_array;
 }
