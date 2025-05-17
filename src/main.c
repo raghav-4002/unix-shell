@@ -35,7 +35,13 @@ main(void)
 
     while(1) {
         printf("seash> ");
+
         input = read_input();
+        if(input == NULL) {
+            fprintf(stderr, "Line reading failed...\n");
+            continue;
+        }
+
         tokens = tokenize_input(input, &token_count);
 
         handle_command(tokens);

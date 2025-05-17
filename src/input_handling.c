@@ -14,6 +14,10 @@ read_input(void)
 
     /* read input line */
     line_len = getline(&line, &n, stdin);
+    if (line_len == -1) {
+        /* in case of getline failing */
+        return NULL;
+    }
 
     /* add null byte at the end */
     line[line_len - 1] = '\0';

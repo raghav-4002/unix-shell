@@ -23,5 +23,5 @@ handle_command(char **tokens)
 void
 execute_command(char **tokens)
 {
-    execvp(tokens[0], tokens);
+    int return_value = execvp(tokens[0], tokens);
 }
