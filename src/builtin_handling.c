@@ -41,6 +41,18 @@ execute_and_exit(char **tokens)
 
 
 void
+display_help(void)
+{
+    printf("Available builtins:\n");
+    printf("-------------------\n");
+
+    for (size_t i = 0; i < builtins_count; i++) {
+        printf(" %s\n", builtins[i]);
+    }
+}
+
+
+void
 handle_builtin(char **tokens)
 {
     if (!strcmp(tokens[0], "cd"))
@@ -51,6 +63,9 @@ handle_builtin(char **tokens)
 
     else if (!strcmp(tokens[0], "exec"))
         execute_and_exit(tokens);
+
+    else if (!strcmp(tokens[0], "help"))
+        display_help();
 }
 
 
