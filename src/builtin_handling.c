@@ -22,8 +22,8 @@ change_dir(char **tokens)
 void
 execute_and_exit(char **tokens)
 {
-    tokens = &tokens[1];
-    execvp(tokens[0], tokens);
+    char **executable = &tokens[1];
+    execvp(executable[0], executable);
 }
 
 
