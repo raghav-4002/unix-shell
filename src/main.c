@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "input_handling.h"
 #include "parsing.h"
 

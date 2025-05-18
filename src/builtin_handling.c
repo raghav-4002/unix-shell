@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "builtin_handling.h"
 
 

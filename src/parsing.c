@@ -1,6 +1,3 @@
-#include <stdbool.h>
-#include <string.h>
-
 #include "parsing.h"
 #include "builtin_handling.h"
 #include "command_handling.h"
