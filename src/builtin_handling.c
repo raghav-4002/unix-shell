@@ -1,5 +1,6 @@
 #include "builtin_handling.h"
 #include <stddef.h>
+#include <stdio.h>
 
 
 /* all supported builtins; some are under construction... */
@@ -17,7 +18,16 @@ size_t builtins_count = sizeof(builtins) / sizeof(builtins[0]);
 void
 change_dir(char **tokens)
 {
-    printf("cd underconstructioin...\n");
+    char *directory = tokens[1];
+
+    int return_value = chdir(directory);
+    if (return_value == -1) {
+        if(errno == ENOENT) {
+            fprintf(stderr, "cd: %s: No such file or directory\n", tokens[1]);
+        } else {
+            fprintf(stderr, "cd: Failed to change directory\n");
+        }
+    }
 }
 
 
