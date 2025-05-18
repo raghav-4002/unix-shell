@@ -1,5 +1,7 @@
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #include "command_handling.h"
 
@@ -24,4 +26,7 @@ void
 execute_command(char **tokens)
 {
     int return_value = execvp(tokens[0], tokens);
+    if (return_value == -1 && errno == ENOENT) {
+        fprintf(stderr, "%s: command not found...\n", tokens[0]);
+    }
 }

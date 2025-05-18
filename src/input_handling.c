@@ -39,10 +39,13 @@ tokenize_input(char *input, int *token_count)
 
     /* increment token count */
     *token_count = *token_count + 1;
+
     /* allocate memory to array */
     token_array = realloc(token_array, *token_count * sizeof(*token_array));
+
     /* allocate memory to store the string(token) */
     token_array[*token_count - 1] = malloc(strlen(token) + 1);
+
     /* move the contents of 'token' to the array of arrays */
     memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
 
@@ -56,7 +59,7 @@ tokenize_input(char *input, int *token_count)
         memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
     }
 
-    /* append with NULL at the end of array */
+    /* append with NULL at the end of array; necessary for 'execvp' function */
     *token_count = *token_count + 1;
     token_array = realloc(token_array, *token_count * sizeof(*token_array));
     token_array[*token_count - 1] = NULL; 
