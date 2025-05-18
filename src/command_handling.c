@@ -23,5 +23,6 @@ execute_command(char **tokens)
     int return_value = execvp(tokens[0], tokens);
     if (return_value == -1 && errno == ENOENT) {
         fprintf(stderr, "%s: command not found...\n", tokens[0]);
+        exit(1);
     }
 }

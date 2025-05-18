@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <stdlib.h>
 
 
 void handle_command(char **tokens);

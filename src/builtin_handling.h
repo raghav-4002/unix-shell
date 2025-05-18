@@ -3,13 +3,12 @@
 
 
 #include <stdio.h>
-
-
-extern const char *builtins[];
-extern unsigned total_builtins;
+#include <stdbool.h>
+#include <string.h>
 
 
 void handle_builtin(char **tokens);
+bool is_builtin(char *token);
 
 
 #endif

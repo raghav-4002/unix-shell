@@ -3,17 +3,6 @@
 #include "command_handling.h"
 
 
-bool
-is_builtin(char *token)
-{
-    for (unsigned i = 0; i < total_builtins; i++) {
-        if (!strcmp(builtins[i], token)) return true;
-    }
-
-    return false;
-}
-
-
 void
 parse_and_execute(char **tokens)
 {
