@@ -15,7 +15,7 @@ read_input(void)
         return NULL;
     }
 
-    /* add null byte at the end */
+    /* add null byte at the end replacing the newline */
     line[line_len - 1] = '\0';
 
     return line;

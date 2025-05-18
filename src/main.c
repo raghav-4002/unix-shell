@@ -9,7 +9,7 @@ free_memory(char *input, char **tokens, int token_count)
     free(input);
     input = NULL;
 
-    /* free memory allocated by 'tokenize_input */
+    /* free memory allocated by 'tokenize_input' */
     for(int i = 0; i < token_count; i++) {
         free(tokens[i]);
     }
@@ -31,6 +31,7 @@ main(void)
 
         input = read_input();
         if(input == NULL) {
+            /* if input reading fails, start over */
             fprintf(stderr, "Line reading failed...\n");
             continue;
         }
