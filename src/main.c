@@ -1,5 +1,6 @@
 #include "input_handling.h"
 #include "parsing.h"
+#include <unistd.h>
 
 
 void
@@ -19,6 +20,19 @@ free_memory(char *input, char **tokens, int token_count)
 }
 
 
+void
+display_message(void)
+{
+    char *username;
+    username = getlogin();
+
+    char hostname[256];
+    gethostname(hostname, sizeof(hostname));
+
+    printf("%s@%s: ", username, hostname);
+}
+
+
 int
 main(void)
 {
@@ -27,7 +41,7 @@ main(void)
     int token_count;
 
     while(1) {
-        printf("seash> ");
+        display_message();
 
         input = read_input();
         if(input == NULL) {
