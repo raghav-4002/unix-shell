@@ -29,7 +29,10 @@ display_message(void)
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
 
-    printf("%s@%s: ", username, hostname);
+    char working_dir[256];
+    getcwd(working_dir, sizeof(working_dir));
+
+    printf("{%s on %s}-[%s]: ", username, hostname, working_dir);
 }
 
 
