@@ -10,8 +10,8 @@ read_input(void)
 
     /* read input line */
     line_len = getline(&line, &n, stdin);
-    if (line_len == -1) {
-        /* in case of getline failing */
+    if (line_len == -1 || line_len == 1) {
+        /* in case of getline failing or user only pressing enter */
         return NULL;
     }
 

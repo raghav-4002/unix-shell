@@ -48,8 +48,7 @@ main(void)
 
         input = read_input();
         if(input == NULL) {
-            /* if input reading fails, start over */
-            fprintf(stderr, "Line reading failed...\n");
+            /* if user only presses enter or if line reading fails */
             continue;
         }
 
