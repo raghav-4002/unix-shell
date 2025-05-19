@@ -1,6 +1,29 @@
 # Sea Shell - A Unix shell written in C
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
+# How to use it:
+**Note**: *As this is a Unix shell, it can only work on Unix-like (POSIX compliant) systems, like Linux, MacOs, BSD, etc. Thus, if you're on Windows, you can't use it as Windows is not Unix-like. Also, I've shown the installation using GCC, but other C compilers should also work.*
+
+- Firstly. clone the repo:
+```bash
+git clone https://github.com/raghav-4002/sea-shell.git ~/sea-shell/
+cd ~/sea-shell
+```
+- Make sure that you have [GCC](https://gcc.gnu.org/) installed in your system.
+- If you also have [GNU Make](https://www.gnu.org/software/make/) installed in your system, run the command:
+```bash
+make
+```
+- Otherwise, you have to manually compile it using:
+```
+gcc -Iinclude src/*.c -o seash
+```
+- You can run the shell using:
+```bash
+./seash
+```
+- To exit, just run `exit`.
+
 
 # Features:
 - Handles all external executables, like `ls`, `pwd`, `man`, etc.
