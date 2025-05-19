@@ -1,5 +1,5 @@
 # Sea Shell - A Unix shell written in C
-**Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`*
+**Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
 
 # Features:
@@ -23,5 +23,11 @@
 - Pipelining.
 - Shell globing.
 - Job control.
-- A `.rc` file support.
+- A `seashrc` file support.
 - Scripting capabilities (maybe).
+
+# How it works:
+- Accepts user input.
+- Tokenizes the input into tokens separated by space.
+- Parses those tokens to check if it's a built-in or an executable.
+- Handles basic errors like command not found and directory not found.
