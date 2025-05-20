@@ -2,7 +2,7 @@
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
 # How to use it:
-**Note**: *As this is a Unix shell, it can only work on Unix-like (POSIX compliant) systems, like Linux, MacOs, BSD, etc. Thus, if you're on Windows, you can't use it as Windows is not Unix-like. Also, I've shown the installation using GCC, but other C compilers should also work.*
+**Note**: *This shell is only tested on Linux as of now. It may or may not work on MacOs. It doesn't work on Windows as all.*
 
 - Firstly. clone the repo:
 ```bash
