@@ -1,6 +1,6 @@
-#include "parsing.h"
-#include "builtin_handling.h"
-#include "command_handling.h"
+#include "../include/parsing.h"
+#include "../include/builtin_handling.h"
+#include "../include/command_handling.h"
 
 
 void
