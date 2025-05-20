@@ -1,5 +1,5 @@
-#include "input_handling.h"
-#include "parsing.h"
+#include "../include/input_handling.h"
+#include "../include/parsing.h"
 
 
 void
