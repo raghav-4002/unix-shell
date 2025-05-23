@@ -20,7 +20,7 @@ free_memory(char *input, char **tokens, int token_count)
 
 
 void
-display_message(void)
+display_prompt(void)
 {
     char *username;
     username = getlogin();
@@ -43,7 +43,7 @@ main(void)
     int token_count;
 
     while(1) {
-        display_message();
+        display_prompt();
 
         input = read_input();
         if(input == NULL) {

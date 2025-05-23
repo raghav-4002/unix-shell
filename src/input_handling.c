@@ -31,7 +31,7 @@ tokenize_input(char *input, int *token_count)
     *token_count = 0;           /* total number of tokens */
 
 
-    token = strtok(string, " ");
+    token = strtok(string, " ;");
 
     /* increment token count */
     *token_count = *token_count + 1;
@@ -46,7 +46,7 @@ tokenize_input(char *input, int *token_count)
     memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
 
     while(1) {
-        token = strtok(NULL, " ");
+        token = strtok(NULL, " ;");
         if(token == NULL) break;            /* tokenization is complete */
 
         *token_count = *token_count + 1;
@@ -55,7 +55,7 @@ tokenize_input(char *input, int *token_count)
         memcpy(token_array[*token_count - 1], token, strlen(token) + 1);
     }
 
-    /* append with NULL at the end of array; necessary for 'execvp' function */
+    /* append with NULL at the end of array */
     *token_count = *token_count + 1;
     token_array = realloc(token_array, *token_count * sizeof(*token_array));
     token_array[*token_count - 1] = NULL; 

@@ -3,5 +3,6 @@
 notes.md
 *.out
 test*
+example*
 
 .gitignore

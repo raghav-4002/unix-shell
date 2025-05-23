@@ -1,15 +1,15 @@
-#include "../include/command_handling.h"
+#include "../include/exec_handling.h"
 
 
 void
-handle_command(char **tokens)
+handle_exec(char **tokens)
 {
     /* create a child process */
     pid_t pid = fork();
 
     if(pid == 0) {
         /* execute the command in the child process */
-        execute_command(tokens);
+        execute(tokens);
     } else {
         /* make the parent process (shell) wait for child to complete the command */
         wait(NULL);
@@ -18,7 +18,7 @@ handle_command(char **tokens)
 
 
 void
-execute_command(char **tokens)
+execute(char **tokens)
 {
     int return_value = execvp(tokens[0], tokens);
     

@@ -9,8 +9,8 @@
 #include <stdlib.h>
 
 
-void handle_command(char **tokens);
-void execute_command(char **tokens);
+void handle_exec(char **tokens);
+void execute(char **tokens);
 
 
 #endif
