@@ -1,22 +1,6 @@
 #include "../include/input_handling.h"
 #include "../include/process.h"
-
-
-void
-free_memory(char *input, char **tokens, int token_count)
-{
-    /* free memory allocated by 'read_input' */
-    free(input);
-    input = NULL;
-
-    /* free memory allocated by 'tokenize_input' */
-    for(int i = 0; i < token_count; i++) {
-        free(tokens[i]);
-    }
-
-    free(tokens);
-    tokens = NULL;
-}
+#include "../include/utils.h"
 
 
 void
@@ -39,17 +23,20 @@ int
 main(void)
 {
     char **commands_array = NULL;
+    size_t commands_count = 0;
 
     while(1) {
         display_prompt();
 
-        commands_array = read_input();
+        commands_array = read_input(&commands_count);
         if(commands_array == NULL) {
             /* in case of error or user pressing enter, just continue the loop */
             continue;
         }
 
         process_and_execute(commands_array);
+
+        free_array_of_arrays(commands_array, commands_count);
     }
 
     return EXIT_SUCCESS;

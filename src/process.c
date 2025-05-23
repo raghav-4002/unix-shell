@@ -1,15 +1,16 @@
 #include "../include/process.h"
 #include "../include/builtin_handling.h"
 #include "../include/exec_handling.h"
+#include "../include/utils.h"
 
 
 /*
- * Takes a string (input) and variable (command_size) and returns an array of strings (tokens),
+ * Takes a string (`input`) and variable (`command_size`) and returns an array of strings (`tokens`),
    that are separated by `space` in the original `input` string.
  * Modifies the value of `command_size` to that of size of the returned array.
 */
 char **
-tokenize_command(char *input, int *command_size)
+tokenize_commands(char *input, int *command_size)
 {
     char *string = input;       /* the string to tokenize */
     char *token = NULL;         /* the individual token*/
@@ -64,7 +65,7 @@ process_and_execute(char **commands_array)
 
     /* take each string, tokenize it and then execute it */
     while(commands_array[i] != NULL) {
-        command = tokenize_command(commands_array[i], &command_size);
+        command = tokenize_commands(commands_array[i], &command_size);
 
         /* check if its builtin or executable */
         if(is_builtin(command[0])) {
@@ -72,6 +73,8 @@ process_and_execute(char **commands_array)
         } else {
             handle_exec(command);
         }
+
+        free_array_of_arrays(command, command_size);
 
         i++;
     }
