@@ -4,5 +4,6 @@ notes.md
 *.out
 test*
 example*
+seash
 
 .gitignore

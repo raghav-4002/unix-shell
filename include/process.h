@@ -6,6 +6,7 @@
 #include <string.h>
 
 
-void parse_and_execute(char **tokens);
+void process_and_execute(char **commands);
+
 
 #endif

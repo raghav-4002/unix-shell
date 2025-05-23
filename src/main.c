@@ -1,5 +1,5 @@
 #include "../include/input_handling.h"
-#include "../include/parsing.h"
+#include "../include/process.h"
 
 
 void
@@ -38,18 +38,18 @@ display_prompt(void)
 int
 main(void)
 {
-    char **input = NULL;
+    char **commands_array = NULL;
 
     while(1) {
         display_prompt();
 
-        input = read_input();
-        if(input == NULL) {
+        commands_array = read_input();
+        if(commands_array == NULL) {
             /* in case of error or user pressing enter, just continue the loop */
             continue;
         }
 
-        process_and_execute(input);
+        process_and_execute(commands_array);
     }
 
     return EXIT_SUCCESS;
