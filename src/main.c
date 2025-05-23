@@ -38,25 +38,18 @@ display_prompt(void)
 int
 main(void)
 {
-    char *input = NULL;
-    char **tokens = NULL;
-    int token_count;
+    char **input = NULL;
 
     while(1) {
         display_prompt();
 
         input = read_input();
         if(input == NULL) {
-            /* if user only presses enter or if line reading fails */
+            /* in case of error or user pressing enter, just continue the loop */
             continue;
         }
 
-        tokens = tokenize_input(input, &token_count);
-
-        parse_and_execute(tokens);
-
-        /* free the memory allocated by read_input function */
-        free_memory(input, tokens, token_count);
+        process_and_execute(input);
     }
 
     return EXIT_SUCCESS;
