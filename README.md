@@ -2,16 +2,16 @@
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
 # How to use it:
-**Note**: *This shell is only tested on Linux as of now. It may or may not work on MacOs. It doesn't work on Windows as all.*
+**Note**: *This shell is only tested on Linux as of now. It may or may not work on MacOs. It doesn't work on Windows at all.*
 
-- Firstly. clone the repo:
-```bash
+- Firstly, clone the repo:
+```shell
 git clone https://github.com/raghav-4002/sea-shell.git ~/sea-shell/
 cd ~/sea-shell
 ```
 - Make sure that you have [GCC](https://gcc.gnu.org/) installed in your system.
-- If you also have [GNU Make](https://www.gnu.org/software/make/) installed in your system, run the command:
-```bash
+- If you also have [GNU Make](https://www.gnu.org/software/make/) installed, run the command:
+```shell
 make
 ```
 - Otherwise, you have to manually compile it using:
@@ -34,12 +34,13 @@ gcc -Iinclude src/*.c -o seash
     - `help`: Display available built-ins (not completed yet).
 - Displays the username of the current logged in user and machine name.
 - Displays the current working directory.
+- Can execute multiple commands separated by semicolons.
 
 ## Currently working on:
-- Allowing the user to edit the command before pressing enter.
-- Tab auto-completion.
-- Executing comma separated commands.
-- Adding `seash_history` file and history preview using arrow key and `history` command.
+- [ ] Allowing the user to edit the command before pressing enter.
+- [ ] Tab auto-completion.
+- [x] Executing semi-colon separated commands.
+- [ ] Adding `seash_history` file and history preview using arrow key and `history` command.
 
 ## Advanced features to be added in near future:
 - IO redirection.
