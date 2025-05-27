@@ -15,7 +15,8 @@ display_prompt(void)
     char working_dir[256];
     getcwd(working_dir, sizeof(working_dir));
 
-    printf("{%s on %s}-[%s]: ", username, hostname, working_dir);
+    printf("\n{%s on %s}-[%s]\n", username, hostname, working_dir);
+    printf("$ ");
 }
 
 

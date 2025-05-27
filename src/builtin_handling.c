@@ -24,11 +24,17 @@ change_dir(char **tokens)
     char *directory = tokens[1];
 
     int return_value = chdir(directory);
+
+    /* handle directory changing errors */
     if (return_value == -1) {
-        if(errno == ENOENT) {
-            fprintf(stderr, "cd: %s: No such file or directory\n", tokens[1]);
-        } else {
-            fprintf(stderr, "cd: Failed to change directory\n");
+        switch(errno) {
+            case ENONET:        // directory or file doesn't exist
+                fprintf(stderr, "cd: %s: No such file or directory\n", tokens[1]);
+                break;
+
+            case EACCES:        // permission for accessing directory denied
+                fprintf(stderr, "cd: %s: Permission denied\n", tokens[1]);
+                break;
         }
     }
 }
