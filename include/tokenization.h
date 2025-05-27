@@ -8,6 +8,7 @@
 
 
 char **remove_semicolons(char *raw_input, size_t *array_size);
+char **tokenize(char *input, int *command_size);
 
 
 #endif
