@@ -16,6 +16,11 @@ size_t builtins_count = sizeof(builtins) / sizeof(builtins[0]);
 void
 change_dir(char **tokens)
 {
+    if(tokens[2] != NULL) {
+        fprintf(stderr, "Too many arguments for cd...\n");
+        return;
+    }
+
     char *directory = tokens[1];
 
     int return_value = chdir(directory);
@@ -53,17 +58,19 @@ display_help(void)
 void
 handle_builtin(char **tokens)
 {
-    if (!strcmp(tokens[0], "cd"))
+    if (!strcmp(tokens[0], "cd")) {
         change_dir(tokens);
-
-    else if (!strcmp(tokens[0], "exit"))
+    }
+    else if (!strcmp(tokens[0], "exit")) {
+        printf("exited\n");
         exit(EXIT_SUCCESS);         /* simply exit the program */
-
-    else if (!strcmp(tokens[0], "exec"))
+    }
+    else if (!strcmp(tokens[0], "exec")) {
         execute_and_exit(tokens);
-
-    else if (!strcmp(tokens[0], "help"))
+    }
+    else if (!strcmp(tokens[0], "help")) {
         display_help();
+    }
 }
 
 
