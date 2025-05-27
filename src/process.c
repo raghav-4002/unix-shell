@@ -14,8 +14,8 @@ tokenize_commands(char *input, int *command_size)
 {
     char *string = input;       /* the string to tokenize */
     char *token = NULL;         /* the individual token*/
-    char **command = NULL;  /* all the tokens to return */
-    *command_size = 0;           /* total number of tokens */
+    char **command = NULL;      /* all the tokens to return */
+    *command_size = 0;          /* total number of tokens */
 
 
     token = strtok(string, " ;");
