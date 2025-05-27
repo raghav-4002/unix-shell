@@ -44,17 +44,15 @@ separate_commands(char *raw_input, size_t *commands_count)
 
 
 /*
- * Reads a line from the stdin and returns an array of strings (commands), if the 
-   string contains semicolons. Last element of array is NULL.
+    Reads a string from stdin and returns a null-terminated string.
+    The returned string is unprocessed.
 */
-char **
-read_input(size_t *commands_count)
+char *
+read_input(void)
 {
     char *raw_input = NULL;
     size_t n = 0;
     ssize_t line_len;
-
-    *commands_count = 0;
 
     /* read raw input from the commandline */
     line_len = getline(&raw_input, &n, stdin);
@@ -67,10 +65,5 @@ read_input(size_t *commands_count)
     /* terminate the input with null byte, replacing newline char */
     raw_input[line_len - 1] = '\0';
 
-    /* make an array of commands, separated by semicolons */
-    char **commands_array = separate_commands(raw_input, commands_count);
-
-    free(raw_input);           // no longer need this; read man page of `getline`, says to free `input`
-
-    return commands_array;       // return the array of strings, where each string is a command
+    return raw_input;
 }

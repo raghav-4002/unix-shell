@@ -51,31 +51,8 @@ tokenize_commands(char *input, int *command_size)
 }
 
 
-/*
- * Takes `commands_array`, array of strings where each string is an unprocessed command.
-   Tokenizes each string into commands, checks whether each command is a builtin or an 
-   executable and passes on the control to respective functions.
-*/
 void
-process_and_execute(char **commands_array)
+process_and_execute(char *raw_input)
 {
-    char **command = NULL;
-    int command_size = 0;
-    size_t i = 0;
-
-    /* take each string, tokenize it and then execute it */
-    while(commands_array[i] != NULL) {
-        command = tokenize_commands(commands_array[i], &command_size);
-
-        /* check if its builtin or executable */
-        if(is_builtin(command[0])) {
-            handle_builtin(command);
-        } else {
-            handle_exec(command);
-        }
-
-        free_array_of_arrays(command, command_size);
-
-        i++;
-    }
+    //write logic to process the input
 }

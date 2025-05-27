@@ -23,22 +23,22 @@ display_prompt(void)
 int
 main(void)
 {
-    char **commands_array = NULL;
-    size_t commands_count = 0;
+    char *raw_input = NULL;
 
     while(1) {
         display_prompt();
 
         /* `commands_array` will have commands after semicolons have been separated */
-        commands_array = read_input(&commands_count);
-        if(commands_array == NULL) {
+        raw_input = read_input();
+    
+        if(raw_input == NULL) {
             /* in case of error or user pressing enter, just continue the loop */
             continue;
         }
 
-        process_and_execute(commands_array);
+        process_and_execute(raw_input);
 
-        free_array_of_arrays(commands_array, commands_count);
+        free(raw_input);    // because memory allocated via getline
     }
 
     return EXIT_SUCCESS;

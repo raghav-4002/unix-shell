@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-void process_and_execute(char **commands);
+void process_and_execute(char *raw_input);
 
 
 #endif
