@@ -1,7 +1,5 @@
 #include "../include/process.h"
-#include "../include/builtin_handling.h"
-#include "../include/exec_handling.h"
-#include "../include/utils.h"
+#include "../include/tokenization.h"
 
 
 /*
@@ -54,5 +52,12 @@ tokenize_commands(char *input, int *command_size)
 void
 process_and_execute(char *raw_input)
 {
-    //write logic to process the input
+    // remove semicolons and create an array of strings
+    char **string_array = NULL;
+    size_t array_size = 0;
+
+    string_array = remove_semicolons(raw_input, &array_size);
+    
+    // 2. Take each token and again process it, checking
+    //    for && or ||.
 }

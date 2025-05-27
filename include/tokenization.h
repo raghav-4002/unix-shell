@@ -3,9 +3,11 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
-char **separate_commands(char *raw_input, size_t *commands_count);
+char **remove_semicolons(char *raw_input, size_t *array_size);
 
 
 #endif
