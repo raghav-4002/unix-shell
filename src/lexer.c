@@ -2,49 +2,6 @@
 
 
 /*
- * Takes a string as an input, tokenizes the string by removing 
-    semicolons and returns an array of array:.
-*/
-char **
-remove_semicolons(char *raw_input, size_t *array_size)
-{
-    char **string_array = NULL;
-    char *token = NULL;
-
-    /* tokenize the string into multiple strings separeted by `;` */
-    token = strtok(raw_input, ";");
-
-    size_t i = 0;
-
-    string_array = realloc(string_array, (i + 1) * sizeof(*string_array));
-    string_array[i] = malloc(strlen(token) + 1);
-    memcpy(string_array[i], token, strlen(token) + 1);
-
-    i++;
-
-    while(1) {
-        token = strtok(NULL, ";");
-
-        if(token == NULL) break;    // tokenization is complete
-
-        string_array = realloc(string_array, (i + 1) * sizeof(*string_array));
-        string_array[i] = malloc(strlen(token) + 1);
-        memcpy(string_array[i], token, strlen(token) + 1);
-
-        i++;
-    }
-
-    /* terminate the array of strings(commands) with NULL */
-    string_array = realloc(string_array, (i + 1) * sizeof(*string_array));
-    string_array[i] = NULL;
-
-    *array_size = i + 1;   /* useful for freeing the memory allocated to `string_array`*/
-
-    return string_array;
-}
-
-
-/*
  * Takes a string (`raw_input`) and variable (`total_tokens`) and returns an array of strings (`tokens`),
    that are separated by `space` or `&&` or `||` in the original `raw_input` string. Adds `NULL` at the
    end of the returned array.
@@ -55,10 +12,35 @@ remove_semicolons(char *raw_input, size_t *array_size)
 char **
 tokenize(char *raw_input, size_t *total_tokens)
 {
+    char **tokens = NULL;
+    size_t token_count = 0;
+    
+    /* variables to traverse through the string */
     size_t i = 0, j = 0;
 
-    while (raw_input[i] != '\0') {
+    while (1) {
         if (!isalpha(raw_input[j])) {
+
+            /*
+             * If encountered character is not an alphabet, 
+               then first add the token from `i` to `j - 1` 
+               into the `tokens` array and the proceed.
+            */
+
+            size_t total_bytes = i - j;     /* token size in bytes */
+
+            /* allocate memory to array for holding another token */
+            tokens = realloc(tokens, token_count + 1);
+
+            /* allocate memory to hold the token itself */
+            tokens[token_count] = malloc(total_bytes + 1);
+
+            /* copy the contents, from `i` to `j - 1` */
+            memcpy(tokens[token_count], &raw_input[i], total_bytes);
+            
+            /* increment token count */
+            token_count++;
+            
 
             switch(raw_input[j]) {
                 case '&':
@@ -80,6 +62,7 @@ tokenize(char *raw_input, size_t *total_tokens)
                 default:
                     fprintf(stderr, "Unrecognised token: %c\n",
                                             raw_input[j]);
+                    exit(EXIT_FAILURE);
 
                     break;
             }
