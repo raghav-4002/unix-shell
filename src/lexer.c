@@ -12,68 +12,33 @@
 char **
 tokenize(char *raw_input, size_t *total_tokens)
 {
-    char **tokens = NULL;
-    size_t token_count = 0;
+    char *p = raw_input;
+
+    while(*p != '\0') {
+        if(isalpha(*p)) {
+            // manage characters
+
+            continue;
+        }
+
+        if(isspace(*p)) {
+            p++;
+            continue;
+        }
     
-    /* variables to traverse through the string */
-    size_t i = 0, j = 0;
+        if(p[0] == '&' && p[1] == '&') {
+            // manage ampersand
+            continue;
+        }
 
-    while (1) {
-        if (!isalpha(raw_input[j])) {
+        if(p[0] == '|' && p[1] == '|') {
+            // manage pipe
+            continue;
+        }
 
-            /*
-             * If encountered character is not an alphabet, 
-               then first add the token from `i` to `j - 1` 
-               into the `tokens` array and the proceed.
-            */
-
-            size_t total_bytes = i - j;     /* token size in bytes */
-
-            /* allocate memory to array for holding another token */
-            tokens = realloc(tokens, token_count + 1);
-
-            /* allocate memory to hold the token itself */
-            tokens[token_count] = malloc(total_bytes + 1);
-
-            /* copy the contents, from `i` to `j - 1` */
-            memcpy(tokens[token_count], &raw_input[i], total_bytes);
-            
-            /* increment token count */
-            token_count++;
-            
-
-            switch(raw_input[j]) {
-                case '&':
-                    // do something with ampersand
-                    break;
-
-                case '|':
-                    // do something with pipe
-                    break;
-
-                case ';':
-                    // do something with semicolon
-                    break;
-
-                case '\0':
-                    // do something with null byte
-                    break;
-
-                default:
-                    fprintf(stderr, "Unrecognised token: %c\n",
-                                            raw_input[j]);
-                    exit(EXIT_FAILURE);
-
-                    break;
-            }
-
-        } else {
-            
-            /*
-             * If the encountered character is an alphabet,
-               simply increment `j`.
-            */
-            j++;
+        if(*p == ';') {
+            // manage semicolon
+            continue;
         }
     }
 }
