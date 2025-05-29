@@ -1,4 +1,6 @@
 #include "../include/lexer.h"
+#include <ctype.h>
+#include <stddef.h>
 
 
 /*
@@ -12,35 +14,108 @@
 char **
 tokenize(char *raw_input, size_t *total_tokens)
 {
+    char **tokens = NULL;
+    size_t token_count = 0;
+
     char *p = raw_input;
 
     while(*p != '\0') {
+
         if(isalpha(*p)) {
-            // manage characters
+            /* allocate one more memory space to `tokens` array */
+            tokens = realloc(tokens, token_count + 1);
+            
+            /* initialize with NULL to make realloc work inside do-while loop */
+            tokens[token_count] = NULL;
+            size_t i = 0;
+
+            do {
+                /* allocate memory to insert one more character */
+                tokens[token_count] = realloc(tokens[token_count], i + 1);
+
+                tokens[token_count][i] = *p;
+
+                i++; /* increment index */
+                p++; /* move to the next character */
+            } while(isalpha(*p));
+
+            /* insert null-byte at the end */
+            tokens[token_count] = realloc(tokens, token_count + 1);
+            tokens[token_count][i] = '\0';
+
+            /* one more token added */
+            token_count++;
 
             continue;
         }
 
         if(isspace(*p)) {
+            /* skip whitespace */
             p++;
             continue;
         }
     
         if(p[0] == '&' && p[1] == '&') {
-            // manage ampersand
+            /* allocate more memory to `tokens` array */
+            tokens = realloc(tokens, token_count + 1);
+
+            /* allocate 3 bytes: 2 for '&&' and one for '\0' */
+            tokens[token_count] = malloc(3);
+
+            /* strlen("&&") = 2; add 1 for including null-byte too */
+            memcpy(tokens[token_count], "&&", strlen("&&") + 1);
+            
+            token_count++;
+
+            /* move 2 steps ahead */
+            p = p + 2;
+
             continue;
         }
 
         if(p[0] == '|' && p[1] == '|') {
-            // manage pipe
+            /* allocate more memory to `tokens` array */
+            tokens = realloc(tokens, token_count + 1);
+
+            /* allocate 3 bytes: 2 for '||' and one for '\0' */
+            tokens[token_count] = malloc(3);
+
+            /* strlen("||") = 2; add 1 for including null-byte too */
+            memcpy(tokens[token_count], "||", strlen("||") + 1);
+
+            token_count++;
+
+            /* move 2 steps ahead */
+            p = p + 2;
+
             continue;
         }
 
         if(*p == ';') {
-            // manage semicolon
+            tokens = realloc(tokens, token_count + 1);
+
+            /* 2 bytes: 1 byte for `;` + 1 byte for '\0' */
+            tokens[token_count] = malloc(2);
+
+            /* strlen(";") = 1; add 1 for including null-byte */
+            memcpy(tokens[token_count], ";", strlen(";") + 1);
+
+            token_count++;
+
+            /* move a single step ahead */
+            p++;
+
             continue;
         }
     }
+
+    tokens[token_count] = realloc(tokens, token_count + 1);
+    tokens[token_count] = NULL;
+    token_count++;
+
+    *total_tokens = token_count;
+
+    return tokens;
 }
 
 

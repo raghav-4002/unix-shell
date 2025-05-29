@@ -5,5 +5,6 @@
 void
 process_and_execute(char *raw_input)
 {
-    tokenize(raw_input, NULL);
+    char **tokens = NULL;
+    tokens = tokenize(raw_input, NULL);
 }
