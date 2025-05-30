@@ -1,4 +1,4 @@
-# Sea Shell - A Unix shell written in C
+# A Unix shell written in C
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
 # How to use it:
@@ -6,8 +6,8 @@
 
 - Firstly, clone the repo:
 ```shell
-git clone https://github.com/raghav-4002/sea-shell.git ~/sea-shell/
-cd ~/sea-shell
+git clone https://github.com/raghav-4002/unix-shell.git ~/unix-shell/
+cd ~/unix-shell
 ```
 - Make sure that you have [GCC](https://gcc.gnu.org/) installed in your system.
 - If you also have [GNU Make](https://www.gnu.org/software/make/) installed, run the command:
@@ -16,11 +16,11 @@ make
 ```
 - Otherwise, you have to manually compile it using:
 ```
-gcc -Iinclude src/*.c -o seash
+gcc -Iinclude src/*.c -o shell
 ```
 - You can run the shell using:
 ```bash
-./seash
+./shell
 ```
 - To exit, just run `exit`.
 
@@ -47,7 +47,7 @@ gcc -Iinclude src/*.c -o seash
 - Pipelining.
 - Shell globing.
 - Job control.
-- A `seashrc` file support.
+- A `shrc` file support.
 - Scripting capabilities (maybe).
 
 # How it works:
