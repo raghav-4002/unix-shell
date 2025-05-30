@@ -22,28 +22,21 @@ tokenize(char *raw_input, size_t *total_tokens)
     while(*p != '\0') {
 
         if(isalpha(*p)) {
-            /* allocate one more memory space to `tokens` array */
             tokens = realloc(tokens, token_count + 1);
-            
-            /* initialize with NULL to make realloc work inside do-while loop */
+
             tokens[token_count] = NULL;
             size_t i = 0;
-
-            do {
-                /* allocate memory to insert one more character */
+            
+            while(isalpha(*p)) {
                 tokens[token_count] = realloc(tokens[token_count], i + 1);
-
                 tokens[token_count][i] = *p;
+                i++;
+                p++;
+            }
 
-                i++; /* increment index */
-                p++; /* move to the next character */
-            } while(isalpha(*p));
-
-            /* insert null-byte at the end */
-            tokens[token_count] = realloc(tokens, token_count + 1);
+            tokens[token_count] = realloc(tokens[token_count], i + 1);
             tokens[token_count][i] = '\0';
 
-            /* one more token added */
             token_count++;
 
             continue;
@@ -109,7 +102,8 @@ tokenize(char *raw_input, size_t *total_tokens)
         }
     }
 
-    tokens[token_count] = realloc(tokens, token_count + 1);
+    /* add `NULL` as the last token, to signify no more tokens */
+    tokens = realloc(tokens, token_count + 1);
     tokens[token_count] = NULL;
     token_count++;
 
