@@ -42,7 +42,7 @@ tokenize(char *raw_input, size_t *total_tokens)
 
     while(*p != '\0') {
 
-        if(isalpha(*p)) {
+        if(isalpha(*p) || *p == '-') {
 
             /* `token_count` is always 1 less than actual tokens count */
             tokens = realloc(tokens, token_count + 1);
@@ -51,12 +51,12 @@ tokenize(char *raw_input, size_t *total_tokens)
             tokens[token_count] = NULL;
             size_t i = 0;
             
-            while(isalpha(*p)) {
+            do {
                 tokens[token_count] = realloc(tokens[token_count], i + 1);
                 tokens[token_count][i] = *p;
                 i++;
                 p++;
-            }
+            } while(isalpha(*p));
 
             /* now add a null byte at the end of token */
             tokens[token_count] = realloc(tokens[token_count], i + 1);
@@ -125,6 +125,8 @@ tokenize(char *raw_input, size_t *total_tokens)
 
             continue;
         }
+
+        
     }
 
     /* add `NULL` as the last token, to signify no more tokens */
