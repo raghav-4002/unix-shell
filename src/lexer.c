@@ -14,6 +14,27 @@
 char **
 tokenize(char *raw_input, size_t *total_tokens)
 {
+    /*
+     * Pointer `p` traverses thru. the string.
+
+     * If it encounters an alphabatic character,
+       it will copy the whole word (succeding 
+       the character) as a token.
+
+     * If it encounters `&` or `|`, it will check
+       whether the next character is also the same.
+       If it is, then another token (`&&` or `||`)
+       will be added.
+
+     * If it sees space, it will just skip over it.
+
+     * It will also add `;` as the token, if it encounters
+       one.
+
+     * When all tokens are added, a `NULL` will be appended
+       in the last of the array, to signify no more tokens.
+    */
+
     char **tokens = NULL;
     size_t token_count = 0;
 
@@ -22,8 +43,11 @@ tokenize(char *raw_input, size_t *total_tokens)
     while(*p != '\0') {
 
         if(isalpha(*p)) {
+
+            /* `token_count` is always 1 less than actual tokens count */
             tokens = realloc(tokens, token_count + 1);
 
+            /* initialize with NULL to make realloc work in the proceeding while loop */
             tokens[token_count] = NULL;
             size_t i = 0;
             
@@ -34,6 +58,7 @@ tokenize(char *raw_input, size_t *total_tokens)
                 p++;
             }
 
+            /* now add a null byte at the end of token */
             tokens[token_count] = realloc(tokens[token_count], i + 1);
             tokens[token_count][i] = '\0';
 
@@ -111,39 +136,3 @@ tokenize(char *raw_input, size_t *total_tokens)
 
     return tokens;
 }
-
-
-
-// char **
-// tokenize(char *raw_input, size_t *total_tokens)
-// {
-//     char *single_token = NULL;       /* the individual token*/
-//     char **tokens = NULL;            /* all the tokens to return */
-//     *total_tokens = 0;               /* total number of tokens */
-
-//     single_token = strtok(raw_input, " ");
-
-//     while(single_token != NULL) {
-//         /* increment tokens count */
-//         *total_tokens = *total_tokens + 1;
-
-//         /* allocate memory to `tokens` array */
-//         tokens = realloc(tokens, *total_tokens * sizeof(*tokens));
-
-//         /* allocate memory to element of `tokens` array */
-//         tokens[*total_tokens - 1] = malloc(strlen(single_token) + 1);
-        
-//         /* copy the contents */
-//         memcpy(tokens[*total_tokens - 1], single_token, strlen(single_token) + 1);
-
-//         /* move to next token, is NULL if no delimiter found */
-//         single_token = strtok(NULL, " ");
-//     }
-
-//     /* append with NULL at the end of array */
-//     *total_tokens = *total_tokens + 1;
-//     tokens = realloc(tokens, *total_tokens * sizeof(*tokens));
-//     tokens[*total_tokens - 1] = NULL; 
-
-//     return tokens;
-// }
