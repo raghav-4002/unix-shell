@@ -37,13 +37,12 @@ tokenize(char *raw_input, size_t *total_tokens)
     size_t token_count = 0;
 
     char *p = raw_input;
-    char *string = NULL;
 
     while(*p != '\0') {
         /* logic for separating tokens */
+
         if(isalpha(*p)) {
-            // handle alphabets
-            tokens = realloc(tokens, token_count + 1);
+            tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
             tokens[token_count] = NULL;
 
             size_t i = 0;
@@ -52,9 +51,10 @@ tokenize(char *raw_input, size_t *total_tokens)
                 tokens[token_count] = realloc(tokens[token_count], i + 1);
                 tokens[token_count][i] = *p;
                 i++;
-                p = p + 1;
+                p++;  /* move pointer to the next character */
             }
 
+            /* have to add null-byte at the end, to signify a string */
             tokens[token_count] = realloc(tokens[token_count], i + 1);
             tokens[token_count][i] = '\0';
 
@@ -64,28 +64,68 @@ tokenize(char *raw_input, size_t *total_tokens)
         }
 
         if(*p == ' ') {
-            // handle space
+            /* just skip the space */
+            p++;
             continue;
         }
 
-        if(*p == '|') {
-            // handle pipe 
+        if(*p == '|' && p[1] == '|') {
+            /* current and next character must be `|`, otherwise syntax error */
+
+            tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
+            
+            /* allocate 3 bytes, 2 for `||` and 1 for `\0` */
+            tokens[token_count] = malloc(3);
+
+            char *string = "||";
+            
+            /* added 1 because `strlen(string) = 2`; need 3 for including `\0` too */
+            memcpy(tokens[token_count], string, strlen(string) + 1);
+
+            p = p + 2;
+            token_count++;
+
             continue;
         }
 
         if(*p == '&') {
-            // handle ampersand
+            /* current and next character must be `&`, otherwise syntax error */
+
+            tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
+            
+            /* allocate 3 bytes, 2 for `&&` and 1 for `\0` */
+            tokens[token_count] = malloc(3);
+
+            char *string = "&&";
+            
+            /* added 1 because `strlen(string) = 2`; need 3 for including `\0` too */
+            memcpy(tokens[token_count], string, strlen(string) + 1);
+
+            p = p + 2;
+            token_count++;
+
             continue;
         }
 
         if(*p == ';') {
-            // handle semi colons
+            tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
+
+            /* allocate 2 bytes, 1 for `;` and 1 for `\0` */
+            tokens[token_count] = malloc(3);
+
+            char *string = ";";
+
+            memcpy(tokens[token_count], string, strlen(string) + 1);
+
+            p++;
+            token_count++;
+            
             continue;
         }
     }
     
-    // add logic to add NULL at the end of `tokens_array`
-    tokens = realloc(tokens, token_count + 1);
+    /* add logic to add NULL at the end of `tokens_array` */
+    tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
     tokens[token_count] = NULL;
 
     return tokens;
