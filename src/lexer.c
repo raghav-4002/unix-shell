@@ -41,18 +41,18 @@ tokenize(char *raw_input, size_t *total_tokens)
     while(*p != '\0') {
         /* logic for separating tokens */
 
-        if(isalpha(*p)) {
+        if(isalpha(*p) || *p == '-') {
             tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
             tokens[token_count] = NULL;
 
             size_t i = 0;
 
-            while(isalpha(*p)) {
+            do {
                 tokens[token_count] = realloc(tokens[token_count], i + 1);
                 tokens[token_count][i] = *p;
                 i++;
                 p++;  /* move pointer to the next character */
-            }
+            } while(isalpha(*p));
 
             /* have to add null-byte at the end, to signify a string */
             tokens[token_count] = realloc(tokens[token_count], i + 1);
@@ -124,7 +124,7 @@ tokenize(char *raw_input, size_t *total_tokens)
         }
     }
     
-    /* add logic to add NULL at the end of `tokens_array` */
+    /* add NULL at the end of `tokens_array` */
     tokens = realloc(tokens, sizeof(*tokens) * token_count + 1);
     tokens[token_count] = NULL;
 
