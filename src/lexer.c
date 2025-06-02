@@ -122,6 +122,10 @@ tokenize(char *raw_input, size_t *total_tokens)
             
             continue;
         }
+
+        /* syntax error due to any unrecognised character */
+        fprintf(stderr, "Invalid syntax\n");
+        return NULL;
     }
     
     /* add NULL at the end of `tokens_array` */
