@@ -8,11 +8,19 @@
 #include <ctype.h>
 
 
+enum return_values {
+    RETURN_SUCCESS  = 1,
+    RETURN_FAILURE  = 0,
+    NOT_DEFINED_YET = -1,
+}
+
+
 typedef enum {
     COMMAND,
     LOGIC_OR,
     LOGIC_AND,
     SEMICOLON,
+    NIL,
 } Element_Type;
 
 /*
