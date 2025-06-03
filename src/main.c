@@ -1,5 +1,6 @@
 #include "../include/input_handling.h"
-#include "../include/process.h"
+#include "../include/lexer.h"
+#include "../include/parser.h"
 
 
 void
@@ -23,22 +24,24 @@ int
 main(void)
 {
     char *raw_input = NULL;
+    Element *elements = NULL;
+    size_t total_elements = 0;
 
     while(1) {
         display_prompt();
 
         /* `commands_array` will have commands after semicolons have been separated */
         raw_input = read_input();
-    
         if(raw_input == NULL) {
             /* in case of error or user pressing enter, just continue the loop */
             continue;
         }
 
-        process_and_execute(raw_input);
+        elements = tokenize(raw_input, &total_elements);
+        parse_and_execute(elements);
 
-        free(raw_input);    // because memory allocated via getline
+        free(raw_input);    // because memory is allocated via getline
     }
 
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
