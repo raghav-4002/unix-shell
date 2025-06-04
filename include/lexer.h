@@ -9,10 +9,10 @@
 
 
 enum return_values {
-    RETURN_SUCCESS  = 1,
-    RETURN_FAILURE  = 0,
-    NOT_DEFINED_YET = -1,
-}
+    RETURN_SUCCESS  =  1,
+    RETURN_FAILURE  = -1,
+    NOT_DEFINED_YET =  0,
+};
 
 
 typedef enum {
