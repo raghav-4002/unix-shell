@@ -6,10 +6,10 @@ size_t elements_count = 0;
 
 
 void
-handle_command(char *string)
+handle_command(char **string)
 {
     /* allocate space for one more element */
-    elements = realloc(elements, sizeof(*elements) * elements_count + 1);
+    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
     
     elements[elements_count].element_type = COMMAND;
     
@@ -19,12 +19,12 @@ handle_command(char *string)
 
     while(1) {
         /* allocate one more space for another token */
-        command = realloc(command, sizeof(*command) * command_size + 1);
+        command = realloc(command, sizeof(*command) * (command_size + 1));
 
         /* `string_len` is just the size of a single token */
         size_t string_len = 0;
         
-        char *ptr = string;
+        char *ptr = *string;
 
         while (
             *ptr != '\0' &&
@@ -41,7 +41,7 @@ handle_command(char *string)
         command[command_size] = malloc(string_len + 1);
 
         /* copy the contents of the token */
-        memcpy(command[command_size], ptr, string_len);
+        memcpy(command[command_size], string, string_len);
         
         /* add null byte at the end */
         command[command_size][string_len] = '\0';
@@ -49,20 +49,20 @@ handle_command(char *string)
         command_size++;     // increment token count
 
         /* move the pointer */
-        string = string + string_len;
+        *string = *string + string_len;
 
-        if(*string == ' ') {
+        if(**string == ' ') {
             /* skip spaces */
-            while(*string == ' ') {
-                string++;
+            while(**string == ' ') {
+                (*string)++;
             }
         }
         
         if(
-            *string == '\0' ||
-            *string == '&'  ||
-            *string == '|'  ||
-            *string == ';'
+            **string == '\0' ||
+            **string == '&'  ||
+            **string == '|'  ||
+            **string == ';'
         ) break;
     }
 
@@ -131,7 +131,7 @@ tokenize(char *raw_input, size_t *total_elements)
         }
 
         if(isalpha(*string)) {
-            handle_command(string);
+            handle_command(&string);
         }
     }
 
