@@ -43,12 +43,12 @@ main(void)
 
         while(elements[i].element_type != NIL) {
             if(elements[i].element_type == COMMAND) {
-                size_t j = 0;
+               size_t j = 0;
 
-                while(j < elements[i].command_size) {
+               while(elements[i].command[j] != NULL) {
                     printf("%s ", elements[i].command[j]);
                     j++;
-                }
+               }
             }
             i++;
         }

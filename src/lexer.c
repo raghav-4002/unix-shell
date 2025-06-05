@@ -12,6 +12,7 @@ handle_command(char **string)
     elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
     
     elements[elements_count].element_type = COMMAND;
+    elements[elements_count].return_value = NOT_DEFINED_YET;
     
     /* two dummy variables to manage tokens */
     char **command = NULL;
@@ -41,7 +42,7 @@ handle_command(char **string)
         command[command_size] = malloc(string_len + 1);
 
         /* copy the contents of the token */
-        memcpy(command[command_size], string, string_len);
+        memcpy(command[command_size], *string, string_len);
         
         /* add null byte at the end */
         command[command_size][string_len] = '\0';
