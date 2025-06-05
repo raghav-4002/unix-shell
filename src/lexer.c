@@ -40,6 +40,8 @@ find_token_length(char **ptr)
         token_length++;
         (*ptr)++;
     }
+
+    return token_length;
 }
 
 
@@ -52,30 +54,35 @@ handle_command(char **string)
     define_element(COMMAND, NOT_DEFINED_YET);
     
     /* two dummy variables to manage tokens */
-    char **command = NULL;
-    size_t command_size = 0;
+    char **tokens = NULL;
+    size_t total_tokens = 0;
 
     while(1) {
-        /* allocate one more space for another token */
-        command = realloc(command, sizeof(*command) * (command_size + 1));
+        /*
+         * A single instance of this loop will find a token
+           and assign it to `tokens` array.
+        */
+
+        /* Add space for one more token */
+        tokens = realloc(tokens, sizeof(*tokens) * (total_tokens + 1));
 
         char *ptr = *string;
 
         size_t token_length = find_token_length(&ptr);
 
         /* allocate memory for a single token; have added `1` to include null-byte */
-        command[command_size] = malloc(string_len + 1);
+        tokens[total_tokens] = malloc(token_length + 1);
 
-        /* copy the contents of the token */
-        memcpy(command[command_size], *string, string_len);
+        /* copy the contents of input into `tokens` array */
+        memcpy(tokens[total_tokens], *string, token_length);
         
-        /* add null byte at the end */
-        command[command_size][string_len] = '\0';
+        /* add null byte at the end of the token */
+        tokens[total_tokens][token_length] = '\0';
 
-        command_size++;     // increment token count
+        total_tokens++;     // increment token count
 
         /* move the pointer */
-        *string = *string + string_len;
+        *string = *string + token_length;
 
         if(**string == ' ') {
             /* skip spaces */
@@ -93,12 +100,12 @@ handle_command(char **string)
     }
 
     /* add a `NULL` as the last token */
-    command = realloc(command, sizeof(*command) * (command_size + 1));
-    command[command_size] = NULL;
+    tokens = realloc(tokens, sizeof(*tokens) * (total_tokens + 1));
+    tokens[total_tokens] = NULL;
 
-    command_size++;
+    total_tokens++;
 
-    elements[elements_count].command = command;
+    elements[elements_count].command = tokens;
 
     elements_count++;
 }
