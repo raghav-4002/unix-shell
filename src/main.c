@@ -40,22 +40,6 @@ main(void)
 
         elements = tokenize(raw_input, &total_elements);
 
-        size_t i = 0;
-
-        while(elements[i].element_type != NIL) {
-            if(elements[i].element_type == COMMAND) {
-               size_t j = 0;
-
-               while(elements[i].command[j] != NULL) {
-                    printf("%s ", elements[i].command[j]);
-                    j++;
-               }
-            }
-            i++;
-        }
-        // parse_and_execute(elements);
-
-        free_elements(elements, total_elements);
         free(raw_input);    // because memory is allocated via getline
     }
 

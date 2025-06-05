@@ -1,4 +1,5 @@
 #include "../include/lexer.h"
+#include <stddef.h>
 
 
 Element *elements = NULL;
@@ -6,13 +7,49 @@ size_t elements_count = 0;
 
 
 void
+allocate_element_space(void)
+{
+    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
+}
+
+
+void
+define_element(int element_type, int return_value)
+{
+    elements[elements_count].element_type = element_type;
+    elements[elements_count].return_value = return_value;
+
+    if(element_type != COMMAND) {
+        elements[elements_count].command = NULL;
+    }
+}
+
+
+size_t
+find_token_length(char **ptr)
+{
+    size_t token_length = 0;
+
+    while(
+        **ptr != '\0' &&
+        **ptr != '&'  &&
+        **ptr != '|'  &&
+        **ptr != ';'  &&
+        **ptr != ' '
+    ) {
+        token_length++;
+        (*ptr)++;
+    }
+}
+
+
+void
 handle_command(char **string)
 {
     /* allocate space for one more element */
-    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
+    allocate_element_space();
     
-    elements[elements_count].element_type = COMMAND;
-    elements[elements_count].return_value = NOT_DEFINED_YET;
+    define_element(COMMAND, NOT_DEFINED_YET);
     
     /* two dummy variables to manage tokens */
     char **command = NULL;
@@ -22,21 +59,9 @@ handle_command(char **string)
         /* allocate one more space for another token */
         command = realloc(command, sizeof(*command) * (command_size + 1));
 
-        /* `string_len` is just the size of a single token */
-        size_t string_len = 0;
-        
         char *ptr = *string;
 
-        while (
-            *ptr != '\0' &&
-            *ptr != '&'  &&
-            *ptr != '|'  &&
-            *ptr != ';'  &&
-            *ptr != ' '
-        ) {
-            string_len++;
-            ptr++;        // move to next character of string
-        }
+        size_t token_length = find_token_length(&ptr);
 
         /* allocate memory for a single token; have added `1` to include null-byte */
         command[command_size] = malloc(string_len + 1);
@@ -82,11 +107,9 @@ handle_command(char **string)
 void
 handle_operand(int operand)
 {
-    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
+    allocate_element_space();
 
-    elements[elements_count].element_type = operand;
-    elements[elements_count].command = NULL;
-    elements[elements_count].return_value = NOT_DEFINED_YET;
+    define_element(operand, NOT_DEFINED_YET);
 
     elements_count++;
 }
@@ -135,10 +158,9 @@ tokenize(char *raw_input, size_t *total_elements)
     }
 
     /* add a dummy element at the end to signify no more elements */
-    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
-    elements[elements_count].element_type = NIL;
-    elements[elements_count].command = NULL;
-    elements[elements_count].return_value = NOT_DEFINED_YET;
+    allocate_element_space();
+
+    define_element(NIL, NOT_DEFINED_YET);
 
     elements_count++;
 

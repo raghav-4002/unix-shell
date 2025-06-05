@@ -16,40 +16,52 @@ enum return_values {
 
 
 typedef enum {
-    COMMAND,
-    LOGIC_OR,
-    LOGIC_AND,
-    SEMICOLON,
-    NIL,
+    COMMAND,    /* like `ls -al` */
+    LOGIC_OR,   /* `||` */
+    LOGIC_AND,  /* `&&` */
+    SEMICOLON,  /* `;` */
+    NIL,        /* No type */
 } Element_Type;
 
 /*
- * Data structures to represent a single element.
+ * A data structure to represent an element.
+ 
+ * An element has a type (like a `COMMAND`,
+   an operator like `LOGIC_AND` or `LOGIC_OR`).
 
- * An element is just a struct with an element type,
-   command, command_size, return_value.
+ * If the `element_type` is `COMMAND`, then it 
+   contains a string array (`command`) which 
+   represents the command itself along with its 
+   arguments.
 
- * If element type is `COMMAND`, then the element is a struct
-   which has an array of string(`command`), such as 
-   {"ls", "-a", "-l", NULL}. The purpose of `NULL` is 
-   to tell that command ends here.
+   For ex: If the user enters `ls -al`, then 
+   an element will be created of type `COMMAND`
 
-   Here `command_size` would be `4`, as there are `4` 
-   elements in this array of strings.
+   This element will have an array of strings
+   `{"ls", "-al", NULL}`, where the first string
+   is the command and the subsequent strings are
+   the arguments of the command.
 
-   Here `return_value` would be `RETURN_SUCCESS`, as
-   `ls` is a valid command with valid arguments.
+   This array has `NULL` as its last element.
+   This is done in order to tell that the command
+   has no more arguments.
 
- * If element type is `LOGIC_OR` (`||`), then the element 
-   is a struct with `command` as `NULL`, and `command_size`
-   as `0`.
+  * If `&&` (logical and) is encountered while 
+    tokenizing user input, then an element of
+    type `LOGIC_AND` will be created.
 
-   This is done because the term `LOGIC_OR` itself is
-   enough to tell what the operand is, so there is no
-   need to create an array of strings.
+    Same can be said if `||` or `;` are encountered.
+    But in that case an element of type `LOGIC_OR`
+    or `SEMICOLON` will be created respectively.
 
-   Here, `return_value` will be the net return value
-   of the logical or operation.
+    These special elements don't need to have
+    an array of strings, as they convey a 
+    different meaning.
+
+  * Every element also has a `return_value` which
+    is initialized with `NOT_DEFINED_YET` for every
+    newly created element, and only has meaning
+    during parsing of these elements.
 
 */
 
