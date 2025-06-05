@@ -56,7 +56,6 @@ typedef enum {
 typedef struct {
     Element_Type element_type;
     char **command;
-    size_t command_size;
     int return_value;
 } Element;
 

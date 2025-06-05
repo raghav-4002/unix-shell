@@ -74,7 +74,6 @@ handle_command(char **string)
     command_size++;
 
     elements[elements_count].command = command;
-    elements[elements_count].command_size = command_size;
 
     elements_count++;
 }
@@ -87,7 +86,6 @@ handle_operand(int operand)
 
     elements[elements_count].element_type = operand;
     elements[elements_count].command = NULL;
-    elements[elements_count].command_size = 0;
     elements[elements_count].return_value = NOT_DEFINED_YET;
 
     elements_count++;
@@ -140,7 +138,6 @@ tokenize(char *raw_input, size_t *total_elements)
     elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
     elements[elements_count].element_type = NIL;
     elements[elements_count].command = NULL;
-    elements[elements_count].command_size = 0;
     elements[elements_count].return_value = NOT_DEFINED_YET;
 
     elements_count++;

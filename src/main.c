@@ -1,6 +1,7 @@
 #include "../include/input_handling.h"
 #include "../include/lexer.h"
 #include "../include/parser.h"
+#include "../include/utils.h"
 
 
 void
@@ -54,6 +55,7 @@ main(void)
         }
         // parse_and_execute(elements);
 
+        free_elements(elements, total_elements);
         free(raw_input);    // because memory is allocated via getline
     }
 
