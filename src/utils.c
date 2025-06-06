@@ -28,11 +28,11 @@ free_elements(Element *elements, size_t total_elements)
         if(elements[i].element_type == COMMAND) {
             size_t j = 0;
 
-            while(elements[i].command[j] != NULL) {
-                free(elements[i].command[j]);
+            while(elements[i].tokens[j] != NULL) {
+                free(elements[i].tokens[j]);
                 j++;
             }
-            free(elements[i].command);
+            free(elements[i].tokens);
         }
     }
 

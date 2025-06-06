@@ -67,7 +67,7 @@ typedef enum {
 
 typedef struct {
     Element_Type element_type;
-    char **command;
+    char **tokens;
     int return_value;
 } Element;
 
