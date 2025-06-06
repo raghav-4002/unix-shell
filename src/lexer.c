@@ -22,20 +22,19 @@ allocate_and_define_elem(int element_type)
 
 
 size_t
-find_token_length(char **string)
+find_token_length(char *ptr)
 {
-    char **ptr = string;
     size_t token_length = 0;
 
     while(
-        **ptr != '\0' &&
-        **ptr != '&'  &&
-        **ptr != '|'  &&
-        **ptr != ';'  &&
-        **ptr != ' '
+        *ptr != '\0' &&
+        *ptr != '&'  &&
+        *ptr != '|'  &&
+        *ptr != ';'  &&
+        *ptr != ' '
     ) {
         token_length++;
-        (*ptr)++;
+        ptr++;
     }
 
     return token_length;
@@ -45,19 +44,21 @@ find_token_length(char **string)
 char **
 create_tokens(char **string)
 {
+    /* 
+     * `string` is passed as reference because changes must 
+        persist between function call
+    */
+
     char **tokens = NULL;
     size_t token_index = 0;
 
     while(1) {
-        /*
-         * A single instance of this loop will find a token
-           and assign it to `tokens` array.
-        */
 
-        /* Add space for one more token */
+        /* Add space for one more token, added `1` as `tokens_index` starts from `0` */
         tokens = realloc(tokens, sizeof(*tokens) * (token_index + 1));
 
-        size_t token_length = find_token_length(string);
+        size_t token_length = find_token_length(*string);
+
 
         /* allocate memory for a single token; have added `1` to include null-byte */
         tokens[token_index] = malloc(token_length + 1);
@@ -70,8 +71,10 @@ create_tokens(char **string)
 
         token_index++;     // increment token count
 
+
         /* move the pointer */
         *string = *string + token_length;
+
 
         if(**string == ' ') {
             /* skip spaces */
@@ -88,6 +91,7 @@ create_tokens(char **string)
         ) break;
     }
 
+    /* add `NULL` as the last token to signify no more tokens are present */
     tokens = realloc(tokens, sizeof(*tokens) * (token_index + 1));
     tokens[token_index] = NULL;
 
