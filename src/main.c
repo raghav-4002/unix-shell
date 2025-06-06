@@ -24,7 +24,6 @@ main(void)
 {
     char *raw_input = NULL;
     Element *elements = NULL;
-    size_t total_elements = 0;
 
     while(1) {
         display_prompt();
@@ -36,7 +35,7 @@ main(void)
             continue;
         }
 
-        elements = tokenize(raw_input, &total_elements);
+        elements = tokenize(raw_input);
 
         free(raw_input);    // because memory is allocated via getline
     }

@@ -72,7 +72,7 @@ typedef struct {
 } Element;
 
 
-Element *tokenize(char *raw_input, size_t *total_elements);
+Element *tokenize(char *raw_input);
 
 
 #endif

@@ -2,24 +2,21 @@
 
 
 Element *elements = NULL;
-size_t elements_count = 0;
+size_t element_index = 0;
 
 
 void
-allocate_element_space(void)
+allocate_and_define_elem(int element_type)
 {
-    elements = realloc(elements, sizeof(*elements) * (elements_count + 1));
-}
+    /* element allocation */
+    elements = realloc(elements, sizeof(*elements) * (element_index + 1));
 
-
-void
-define_element(int element_type, int return_value)
-{
-    elements[elements_count].element_type = element_type;
-    elements[elements_count].return_value = return_value;
+    /* Initialization of `element_type`, `return_value`, and optionally `command` */
+    elements[element_index].element_type = element_type;
+    elements[element_index].return_value = NOT_DEFINED_YET;
 
     if(element_type != COMMAND) {
-        elements[elements_count].command = NULL;
+        elements[element_index].command = NULL;
     }
 }
 
@@ -94,9 +91,8 @@ create_token(char **string)
     tokens = realloc(tokens, sizeof(*tokens) * (total_tokens + 1));
     tokens[total_tokens] = NULL;
 
-    total_tokens++;
 
-    elements[elements_count].command = tokens;
+    elements[element_index].command = tokens;
 }
 
 
@@ -104,78 +100,64 @@ void
 handle_command(char **string)
 {
     /* allocate space for one more element */
-    allocate_element_space();
-    define_element(COMMAND, NOT_DEFINED_YET);
+    allocate_and_define_elem(COMMAND);
 
     create_token(string);
 
-    elements_count++;
+    element_index++;
 }
 
 
 void
 handle_operand(int operand)
 {
-    allocate_element_space();
+    allocate_and_define_elem(operand);
 
-    define_element(operand, NOT_DEFINED_YET);
-
-    elements_count++;
+    element_index++;
 }
 
 
 Element *
-tokenize(char *raw_input, size_t *total_elements)
+tokenize(char *raw_input)
 {
     char *string = raw_input;
 
     while(*string != '\0') {
 
         if(*string == '|') {
-            if(string[1] != '|') {
-                //handle error
-            }
             handle_operand(LOGIC_OR);
+
             string = string + 2;
             continue;
         }
 
         if(*string == '&') {
-            if(string[1] != '&') {
-                //handle error
-            }
             handle_operand(LOGIC_AND);
+
             string = string + 2;
             continue;
         }
 
         if(*string == ';') {
             handle_operand(SEMICOLON);
+
             string++;
             continue;
         }
 
         if(isspace(*string)) {
-            // skip space
+            /* skip space */
             string++;
             continue;
         }
 
-        // if(isalpha(*string)) {
-        //     handle_command(&string);
-        // }
         else {
             handle_command(&string);
         }
     }
 
     /* add a dummy element at the end to signify no more elements */
-    allocate_element_space();
+    allocate_and_define_elem(NIL);
 
-    define_element(NIL, NOT_DEFINED_YET);
-
-    elements_count++;
-
-    *total_elements = elements_count;
     return elements;
 }
