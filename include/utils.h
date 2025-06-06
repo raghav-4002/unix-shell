@@ -7,7 +7,7 @@
 
 
 void free_array_of_arrays(char **array, size_t array_size);
-void free_elements(Element *elements, size_t total_elements);
+void free_elements(Element **elements);
 
 
 #endif

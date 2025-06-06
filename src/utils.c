@@ -1,4 +1,5 @@
 #include "../include/utils.h"
+#include <stddef.h>
 
 
 /*
@@ -20,21 +21,19 @@ free_array_of_arrays(char **array, size_t array_size)
 
 
 void
-free_elements(Element *elements, size_t total_elements)
+free_elements(Element **elements)
 {
-    size_t i;
+    for(size_t i = 0; (*elements)[i].element_type != NIL; i++) {
 
-    for(i = 0; elements[i].element_type != NIL; i++) {
-        if(elements[i].element_type == COMMAND) {
-            size_t j = 0;
+        if((*elements)[i].element_type == COMMAND) {
 
-            while(elements[i].tokens[j] != NULL) {
-                free(elements[i].tokens[j]);
-                j++;
+            for(size_t j = 0; (*elements)[i].tokens[j] != NULL; j++) {
+                free((*elements)[i].tokens[j]);
             }
-            free(elements[i].tokens);
+            free((*elements)[i].tokens);
         }
     }
 
-    free(elements);
+    free(*elements);
+    *elements = NULL;
 }
