@@ -1,5 +1,4 @@
 #include "../include/lexer.h"
-#include <stddef.h>
 
 
 Element *elements = NULL;
@@ -46,14 +45,8 @@ find_token_length(char **ptr)
 
 
 void
-handle_command(char **string)
+create_token(char **string)
 {
-    /* allocate space for one more element */
-    allocate_element_space();
-    
-    define_element(COMMAND, NOT_DEFINED_YET);
-    
-    /* two dummy variables to manage tokens */
     char **tokens = NULL;
     size_t total_tokens = 0;
 
@@ -98,14 +91,23 @@ handle_command(char **string)
             **string == ';'
         ) break;
     }
-
-    /* add a `NULL` as the last token */
     tokens = realloc(tokens, sizeof(*tokens) * (total_tokens + 1));
     tokens[total_tokens] = NULL;
 
     total_tokens++;
 
     elements[elements_count].command = tokens;
+}
+
+
+void
+handle_command(char **string)
+{
+    /* allocate space for one more element */
+    allocate_element_space();
+    define_element(COMMAND, NOT_DEFINED_YET);
+
+    create_token(string);
 
     elements_count++;
 }
@@ -159,7 +161,10 @@ tokenize(char *raw_input, size_t *total_elements)
             continue;
         }
 
-        if(isalpha(*string)) {
+        // if(isalpha(*string)) {
+        //     handle_command(&string);
+        // }
+        else {
             handle_command(&string);
         }
     }

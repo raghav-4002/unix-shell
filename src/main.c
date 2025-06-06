@@ -1,7 +1,5 @@
 #include "../include/input_handling.h"
 #include "../include/lexer.h"
-#include "../include/parser.h"
-#include "../include/utils.h"
 
 
 void
@@ -31,8 +29,8 @@ main(void)
     while(1) {
         display_prompt();
 
-        /* `commands_array` will have commands after semicolons have been separated */
         raw_input = read_input();
+
         if(raw_input == NULL) {
             /* in case of error or user pressing enter, just continue the loop */
             continue;
