@@ -46,7 +46,7 @@ main(void)
             }
         }
 
-        free_elements(&elements);
+        free_elements(elements);
 
         free(raw_input);    // because memory is allocated via getline
     }
