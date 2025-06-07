@@ -1,8 +1,8 @@
 #include "../include/lexer.h"
 
 
-Element *elements = NULL;
-size_t element_index = 0;
+Element *elements;
+size_t element_index;
 
 
 void
@@ -123,6 +123,10 @@ handle_operand(int operand)
 Element *
 tokenize(char *raw_input)
 {
+    /* initialize the global variables */
+    elements = NULL;
+    element_index = 0;
+
     char *string = raw_input;
 
     while(*string != '\0') {
