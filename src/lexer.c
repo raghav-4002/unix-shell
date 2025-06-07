@@ -1,167 +1,161 @@
 #include "../include/lexer.h"
 
-
 Element *elements;
 size_t element_index;
 
-
 void
-allocate_and_define_elem(int element_type)
+allocate_and_define_elem (int element_type)
 {
-    /* `element_index` starts with 0, thus need to add `1` */
-    elements = realloc(elements, sizeof(*elements) * (element_index + 1));
+  /* `element_index` starts with 0, thus need to add `1` */
+  elements = realloc (elements, sizeof (*elements) * (element_index + 1));
 
-    elements[element_index].element_type = element_type;
-    elements[element_index].return_value = NOT_DEFINED_YET; /* same for every element */
+  elements[element_index].element_type = element_type;
+  elements[element_index].return_value
+      = NOT_DEFINED_YET; /* same for every element */
 
-    if(element_type != COMMAND) {
-        /* `COMMAND` type will have an array of strings */
-        elements[element_index].tokens = NULL;
+  if (element_type != COMMAND)
+    {
+      /* `COMMAND` type will have an array of strings */
+      elements[element_index].tokens = NULL;
     }
 }
-
 
 size_t
-find_token_length(char *ptr)
+find_token_length (char *ptr)
 {
-    size_t token_length = 0;
+  size_t token_length = 0;
 
-    while(
-        *ptr != '\0' &&
-        *ptr != '&'  &&
-        *ptr != '|'  &&
-        *ptr != ';'  &&
-        *ptr != ' '
-    ) {
-        token_length++;
-        ptr++;
+  while (*ptr != '\0' && *ptr != '&' && *ptr != '|' && *ptr != ';'
+         && *ptr != ' ')
+    {
+      token_length++;
+      ptr++;
     }
 
-    return token_length;
+  return token_length;
 }
-
 
 char **
-create_tokens(char **string)
+create_tokens (char **string)
 {
-    /* 
-     * `string` is passed as reference because changes must 
-        persist between function call
-    */
+  /*
+   * `string` is passed as reference because changes must
+      persist between function call
+  */
 
-    char **tokens = NULL;
-    size_t token_index = 0;
+  char **tokens = NULL;
+  size_t token_index = 0;
 
-    while(1) {
+  while (1)
+    {
+      /* Add space for one more token, added `1` as `tokens_index` starts from
+       * `0` */
+      tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
 
-        /* Add space for one more token, added `1` as `tokens_index` starts from `0` */
-        tokens = realloc(tokens, sizeof(*tokens) * (token_index + 1));
+      size_t token_length = find_token_length (*string);
 
-        size_t token_length = find_token_length(*string);
+      /* allocate memory for a single token; have added `1` to include
+       * null-byte */
+      tokens[token_index] = malloc (token_length + 1);
 
+      /* copy the contents of input into `tokens` array */
+      memcpy (tokens[token_index], *string, token_length);
 
-        /* allocate memory for a single token; have added `1` to include null-byte */
-        tokens[token_index] = malloc(token_length + 1);
+      /* add null byte at the end of the token */
+      tokens[token_index][token_length] = '\0';
 
-        /* copy the contents of input into `tokens` array */
-        memcpy(tokens[token_index], *string, token_length);
-        
-        /* add null byte at the end of the token */
-        tokens[token_index][token_length] = '\0';
+      token_index++; // increment token count
 
-        token_index++;     // increment token count
+      /* move the pointer */
+      *string = *string + token_length;
 
-
-        /* move the pointer */
-        *string = *string + token_length;
-
-
-        if(**string == ' ') {
-            /* skip spaces */
-            while(**string == ' ') {
-                (*string)++;
+      if (**string == ' ')
+        {
+          /* skip spaces */
+          while (**string == ' ')
+            {
+              (*string)++;
             }
         }
-        
-        if(
-            **string == '\0' ||
-            **string == '&'  ||
-            **string == '|'  ||
-            **string == ';'
-        ) break;
+
+      if (**string == '\0' || **string == '&' || **string == '|'
+          || **string == ';')
+        break;
     }
 
-    /* add `NULL` as the last token to signify no more tokens are present */
-    tokens = realloc(tokens, sizeof(*tokens) * (token_index + 1));
-    tokens[token_index] = NULL;
+  /* add `NULL` as the last token to signify no more tokens are present */
+  tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
+  tokens[token_index] = NULL;
 
-    return tokens;
+  return tokens;
 }
-
 
 void
-handle_command(char **string)
+handle_command (char **string)
 {
-    /* allocate space for one more element */
-    allocate_and_define_elem(COMMAND);
+  /* allocate space for one more element */
+  allocate_and_define_elem (COMMAND);
 
-    elements[element_index].tokens = create_tokens(string);
+  elements[element_index].tokens = create_tokens (string);
 
-    element_index++;
+  element_index++;
 }
-
 
 void
-handle_operand(int operand)
+handle_operand (int operand)
 {
-    allocate_and_define_elem(operand);
+  allocate_and_define_elem (operand);
 
-    element_index++;
+  element_index++;
 }
-
 
 Element *
-tokenize(char *raw_input)
+tokenize (char *raw_input)
 {
-    /* initialize the global variables */
-    elements = NULL;
-    element_index = 0;
+  /* initialize the global variables */
+  elements = NULL;
+  element_index = 0;
 
-    char *string = raw_input;
+  char *string = raw_input;
 
-    while(*string != '\0') {
-
-        if(*string == '|') {
-            handle_operand(LOGIC_OR);
-            string = string + 2;
-            continue;
+  while (*string != '\0')
+    {
+      if (*string == '|')
+        {
+          handle_operand (LOGIC_OR);
+          string = string + 2;
+          continue;
         }
 
-        if(*string == '&') {
-            handle_operand(LOGIC_AND);
-            string = string + 2;
-            continue;
+      if (*string == '&')
+        {
+          handle_operand (LOGIC_AND);
+          string = string + 2;
+          continue;
         }
 
-        if(*string == ';') {
-            handle_operand(SEMICOLON);
-            string++;
-            continue;
+      if (*string == ';')
+        {
+          handle_operand (SEMICOLON);
+          string++;
+          continue;
         }
 
-        if(isspace(*string)) {
-            /* skip space */
-            string++;
-            continue;
+      if (isspace (*string))
+        {
+          /* skip space */
+          string++;
+          continue;
         }
 
-        else {
-            handle_command(&string);
+      else
+        {
+          handle_command (&string);
         }
     }
 
-    /* add a dummy element at the end to signify no more elements */
-    allocate_and_define_elem(NIL);
+  /* add a dummy element at the end to signify no more elements */
+  allocate_and_define_elem (NIL);
 
-    return elements;
+  return elements;
 }
