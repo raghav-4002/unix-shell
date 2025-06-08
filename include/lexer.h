@@ -15,11 +15,17 @@ enum return_values
 
 typedef enum
 {
-  COMMAND,   /* like `ls -al` */
+  COMMAND, /* like `ls -al` */
+
+  PIPE,        /* '|' */
+  BG_OPERATOR, /* '&' */
+
   LOGIC_OR,  /* `||` */
   LOGIC_AND, /* `&&` */
-  SEMICOLON, /* `;` */
-  NIL,       /* No type */
+
+  NEXT, /* `;` */
+
+  NIL, /* No type */
 } Element_Type;
 
 typedef struct

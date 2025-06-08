@@ -105,7 +105,6 @@ void
 handle_operand (int operand)
 {
   allocate_and_define_elem (operand);
-
   element_index++;
 }
 
@@ -120,23 +119,37 @@ tokenize (char *raw_input)
 
   while (*string != '\0')
     {
-      if (*string == '|')
+      if (*string == '|' && string[1] == '|')
         {
           handle_operand (LOGIC_OR);
           string = string + 2;
           continue;
         }
 
-      if (*string == '&')
+      if (string[0] == '|')
+        {
+          handle_operand (PIPE);
+          string++;
+          continue;
+        }
+
+      if (*string == '&' && string[1] == '&')
         {
           handle_operand (LOGIC_AND);
           string = string + 2;
           continue;
         }
 
+      if (*string == '&')
+        {
+          handle_operand (BG_OPERATOR);
+          string++;
+          continue;
+        }
+
       if (*string == ';')
         {
-          handle_operand (SEMICOLON);
+          handle_operand (NEXT);
           string++;
           continue;
         }
