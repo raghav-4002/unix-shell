@@ -28,10 +28,14 @@ typedef enum
   NIL, /* No type */
 } Element_Type;
 
-typedef struct
+typedef struct Element
 {
   Element_Type element_type;
   char **tokens;
+
+  struct Element *left;
+  struct Element *right;
+
   int return_value;
 } Element;
 
