@@ -1,3 +1,5 @@
+# It is underconstruction right now, won't work.
+
 # A Unix shell written in C
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
