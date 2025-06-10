@@ -14,7 +14,7 @@ Element *
 parse_condition(Element *elements, size_t from, size_t till)
 {
     size_t position_of_operands[MAX_ALLOWED_SIZE];
-    size_t index = 1;
+    size_t index = 0;
     size_t i, last_index;
 
     for(i = from; i <= till; i++) {
@@ -22,8 +22,8 @@ parse_condition(Element *elements, size_t from, size_t till)
             elements[i].element_type == LOGIC_AND ||
             elements[i].element_type == LOGIC_OR
         ) {
-            position_of_operands[index] = i;
             index++;
+            position_of_operands[index] = i;
         }
     }
 
@@ -68,13 +68,13 @@ parse_sequence(Element *elements)
 {
     /* logic to find positions of semicolons */
     size_t position_of_colons[MAX_ALLOWED_SIZE];
-    size_t index = 1;
+    size_t index = 0;
     size_t i, last_index;
 
     for(i = 0; elements[i].element_type != NIL && i < MAX_ALLOWED_SIZE; i++) {
         if(elements[i].element_type == NEXT) {
-            position_of_colons[index] = i;
             index++;
+            position_of_colons[index] = i;
         }
     }
 
