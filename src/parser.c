@@ -6,7 +6,34 @@
 Element *
 parse_pipeline(Element *elements, size_t from, size_t till)
 {
+    size_t position_of_pipes[MAX_ALLOWED_SIZE];
+    size_t index = 0;
+    size_t i, last_index;
 
+    for(i = from; i <= till; i++) {
+        if (elements[i].element_type == PIPE) {
+            index++;
+            position_of_pipes[index] = i;
+        }
+    }
+
+    last_index = i;
+
+    Element *root = &elements[index];
+
+    while(index != 0) {
+        /* for left child */ 
+        if(index != 1) {
+            elements[index].left = &elements[index - 1];
+        } else {
+            elements[index].left = &elements[index] - 1;
+        }
+
+        /* for right child */
+        elements[index].right = &elements[index + 1];
+    }
+
+    return root;
 }
 
 /* this function will parse the conditions from `lower_limit` to `upper_limit` of `elements` */
