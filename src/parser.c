@@ -150,7 +150,7 @@ parse_and_execute (Element *elements)
     Element *root = parse_sequence(elements);
 
     if (root == NULL) {
-        fprintf("Error...\n");
+        fprintf(stderr ,"Error...\n");
         return;
     }
 }
