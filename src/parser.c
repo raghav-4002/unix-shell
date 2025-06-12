@@ -1,5 +1,4 @@
 #include "../include/parser.h"
-#include <stddef.h>
 
 #define MAX_ALLOWED_SIZE 100
 
@@ -148,5 +147,10 @@ parse_sequence(Element *elements)
 void
 parse_and_execute (Element *elements)
 {
-    parse_sequence(elements);
+    Element *root = parse_sequence(elements);
+
+    if (root == NULL) {
+        fprintf("Error...\n");
+        return;
+    }
 }
