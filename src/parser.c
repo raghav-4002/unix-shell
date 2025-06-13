@@ -150,7 +150,7 @@ parse_and_execute (Element *elements)
     Element *root = parse_sequence(elements);
 
     if (root == NULL) {
-        fprintf(stderr ,"Error...\n");
+        fprintf(stderr ,"Error...max input size exceeded\n");
         return;
     }
 }
