@@ -3,6 +3,11 @@
 Element *elements;
 size_t element_index;
 
+/*
+ * Reallocates space in `elements` array to
+   include another element.
+ * Also sets the `element_type` of the element
+*/
 void
 allocate_and_define_elem (int element_type)
 {
@@ -35,12 +40,17 @@ find_token_length (char *ptr)
   return token_length;
 }
 
+/* 
+   returns an array of strings, where each item
+   of array is either a command or the command's
+   arguments
+ */
 char **
 create_tokens (char **string)
 {
   /*
    * `string` is passed as reference because changes must
-      persist between function call
+      persist between both the functions
   */
 
   char **tokens = NULL;
@@ -48,7 +58,7 @@ create_tokens (char **string)
 
   while (1)
     {
-      /* Add space for one more token, added `1` as `tokens_index` starts from
+      /* Add space for one more token; added `1` as `tokens_index` starts from
        * `0` */
       tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
 
@@ -83,7 +93,7 @@ create_tokens (char **string)
         break;
     }
 
-  /* add `NULL` as the last token to signify no more tokens are present */
+  /* add `NULL` as the last token to signify no more arguments are present */
   tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
   tokens[token_index] = NULL;
 
@@ -95,7 +105,6 @@ handle_command (char **string)
 {
   /* allocate space for one more element */
   allocate_and_define_elem (COMMAND);
-
   elements[element_index].tokens = create_tokens (string);
 
   element_index++;
@@ -108,6 +117,7 @@ handle_operand (int operand)
   element_index++;
 }
 
+/* Tokenizes a string and returns an array of `Element` */
 Element *
 tokenize (char *raw_input)
 {
