@@ -109,7 +109,7 @@ parse_condition (Element *elements, size_t from, size_t till)
 Element *
 parse_sequence (Element *elements)
 {
-  /* logic to find positions of semicolons */
+  /* index of semicolons in `elements` array */
   size_t position_of_colons[MAX_ALLOWED_SIZE];
   size_t index = 0;
   size_t i, last_index;
