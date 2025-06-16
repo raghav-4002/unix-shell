@@ -123,13 +123,25 @@ parse_sequence (Element *elements)
         }
     }
 
+  /* errot */
   if (i >= MAX_ALLOWED_SIZE)
     return NULL;
 
   last_index = i;
 
-  /* the last semi colon will be root */
-  Element *root = &elements[index];
+  /* define a root element */
+  Element root;
+  root.element_type = ROOT;
+  root.return_value = NOT_DEFINED_YET;
+  root.right = NULL;
+  root.tokens = NULL;
+
+  /* handle edge cases */
+  if(index == 0) {
+    /* if no semicolon is found */
+    root.left = parse_condition(elements, 0, last_index);
+  }
+  
 
   /* now create a tree out of these semicolons */
   while (index != 0)
