@@ -130,16 +130,17 @@ parse_sequence (Element *elements)
   last_index = i;
 
   /* define a root element */
-  Element root;
-  root.element_type = ROOT;
-  root.return_value = NOT_DEFINED_YET;
-  root.right = NULL;
-  root.tokens = NULL;
+  Element *root;
+  root->element_type = ROOT;
+  root->return_value = NOT_DEFINED_YET;
+  root->right = NULL;
+  root->tokens = NULL;
 
   /* handle edge cases */
   if(index == 0) {
     /* if no semicolon is found */
-    root.left = parse_condition(elements, 0, last_index);
+    root->left = parse_condition(elements, 0, last_index);
+    return root;
   }
   
 
