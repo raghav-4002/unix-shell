@@ -32,7 +32,8 @@ main (void)
       raw_input = read_input ();
       if (raw_input == NULL)
         {
-          /* in case of error or user just pressing enter, just continue the loop */
+          /* in case of error or user just pressing enter, just continue the
+           * loop */
           continue;
         }
 

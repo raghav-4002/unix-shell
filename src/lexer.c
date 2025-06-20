@@ -43,7 +43,7 @@ find_token_length (char *ptr)
   return token_length;
 }
 
-/* 
+/*
    returns an array of strings, where each item
    of array is either a command or the command's
    arguments
