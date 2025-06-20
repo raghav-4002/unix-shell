@@ -32,15 +32,15 @@ main (void)
       raw_input = read_input ();
       if (raw_input == NULL)
         {
-          /* in case of error or user pressing enter, just continue the loop */
+          /* in case of error or user just pressing enter, just continue the loop */
           continue;
         }
 
       elements = tokenize (raw_input);
-      parse_and_execute (elements);
+      parse_and_evaluate (elements);
 
       free_elements (elements);
-      free (raw_input); // because memory is allocated via getline
+      free (raw_input); /* because memory is allocated via getline */
     }
 
   exit (EXIT_SUCCESS);

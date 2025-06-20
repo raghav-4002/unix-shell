@@ -3,6 +3,6 @@
 
 #include "../include/lexer.h"
 
-void parse_and_execute (Element *elements);
+void parse_and_evaluate (Element *elements);
 
 #endif

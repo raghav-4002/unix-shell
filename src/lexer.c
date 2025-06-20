@@ -15,6 +15,9 @@ allocate_and_define_elem (int element_type)
   elements = realloc (elements, sizeof (*elements) * (element_index + 1));
 
   elements[element_index].element_type = element_type;
+  elements[element_index].left = NULL;
+  elements[element_index].right = NULL;
+
   elements[element_index].return_value
       = NOT_DEFINED_YET; /* same for every element */
 
@@ -147,13 +150,6 @@ tokenize (char *raw_input)
         {
           handle_operand (LOGIC_AND);
           string = string + 2;
-          continue;
-        }
-
-      if (*string == '&')
-        {
-          handle_operand (BG_OPERATOR);
-          string++;
           continue;
         }
 
