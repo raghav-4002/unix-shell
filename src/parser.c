@@ -50,7 +50,35 @@ parse_sequence (Element *elements)
 }
 
 void
+traverse(Element *ast_root)
+{
+    if(ast_root == NULL) return;
+
+    traverse(ast_root->left);
+
+    if(ast_root->element_type == COMMAND) {
+        for (size_t j = 0; ast_root->tokens[j] != NULL; j++) {
+            printf("%s ", ast_root->tokens[j]);
+        }
+        printf("\n");
+    }
+    else if(ast_root->element_type == LOGIC_AND) {
+        printf("LOGIC AND\n");
+    }
+    else if(ast_root->element_type == LOGIC_OR) {
+        printf("LOGIC OR\n");
+    }
+    else if(ast_root->element_type == NEXT) {
+        printf("NEXT\n");
+    }
+
+    traverse(ast_root->right);
+}
+
+void
 parse_and_evaluate (Element *elements)
 {
   Element *ast_root = parse_sequence (elements);
+
+  traverse(ast_root);
 }
