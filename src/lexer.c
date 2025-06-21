@@ -139,13 +139,6 @@ tokenize (char *raw_input)
           continue;
         }
 
-      if (string[0] == '|')
-        {
-          handle_operand (PIPE);
-          string++;
-          continue;
-        }
-
       if (*string == '&' && string[1] == '&')
         {
           handle_operand (LOGIC_AND);
@@ -167,10 +160,16 @@ tokenize (char *raw_input)
           continue;
         }
 
-      else
+      if (isalpha(*string))
         {
           handle_command (&string);
+          continue;
         }
+
+      else {
+        fprintf(stderr, "Syntax error: Unrecognised token: %c\n", *string);
+        return NULL;
+      }
     }
 
   /* add a dummy element at the end to signify no more elements */
