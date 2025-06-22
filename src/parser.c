@@ -1,9 +1,15 @@
 #include "../include/parser.h"
+#include <stdio.h>
 
 Element *
 parse_condition (Element *elements, size_t *pos)
 {
   Element *left = &elements[*pos];
+    /* `left` must always be a command */ 
+    if(left->element_type != COMMAND) {
+        fprintf(stderr, "Invalid syntax...\n");
+        return NULL;
+    }
 
   while (elements[*pos].element_type != NIL
          && elements[*pos].element_type != NEXT)
@@ -34,6 +40,7 @@ parse_sequence (Element *elements)
 
   /* left most leaf */
   Element *left = parse_condition (elements, &pos);
+    if(!left) return NULL;  /* in case of error */
 
   /* `parse_condition()` will increment `pos` */
   while (elements[pos].element_type != NIL)
@@ -80,5 +87,5 @@ parse_and_evaluate (Element *elements)
 {
   Element *ast_root = parse_sequence (elements);
 
-  traverse(ast_root);
+    if(ast_root) traverse(ast_root);
 }
