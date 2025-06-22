@@ -1,4 +1,6 @@
 #include "../include/lexer.h"
+#include "../include/utils.h"
+#include <unistd.h>
 
 Element *elements;
 size_t element_index;
@@ -168,6 +170,13 @@ tokenize (char *raw_input)
 
       else {
         fprintf(stderr, "Syntax error: Unrecognised token: %c\n", *string);
+
+        /* Append a `NIL` element,
+         * free the memory allocated 
+         * and return NULL
+         */
+        allocate_and_define_elem (NIL);
+        free_elements(elements);
         return NULL;
       }
     }
