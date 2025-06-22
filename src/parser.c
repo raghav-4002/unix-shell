@@ -22,7 +22,12 @@ parse_condition (Element *elements, size_t *pos)
           elements[*pos].left = left;
           left = &elements[*pos];
           (*pos)++;
+
           left->right = &elements[*pos];
+            if(left->right->element_type != COMMAND) {
+                fprintf(stderr, "Invalid syntax...\n");
+                return NULL;
+            }
         }
 
       (*pos)++;
@@ -49,6 +54,7 @@ parse_sequence (Element *elements)
       left = &elements[pos];
       pos++;
       left->right = parse_condition (elements, &pos);
+        if(!left->right) return NULL;
     }
 
   Element *ast_root = left;
