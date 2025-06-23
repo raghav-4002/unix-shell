@@ -1,6 +1,5 @@
 #include "../include/lexer.h"
 #include "../include/utils.h"
-#include <unistd.h>
 
 Element *elements;
 size_t element_index;
@@ -8,6 +7,7 @@ size_t element_index;
 /*
  * Reallocates space in `elements` array to
    include another element.
+ *
  * Also sets the `element_type` of the element
 */
 void
@@ -46,40 +46,42 @@ find_token_length (char *ptr)
 }
 
 /*
-   returns an array of strings, where each item
-   of array is either a command or the command's
-   arguments
+ * Takes the pointer to the current character in `string`.
+ * Returns an array of strings (`tokens`).
+ * Each string in the array is a command and its arguments.
+ * Last item of array is `NULL`.
  */
+
 char **
 create_tokens (char **string)
 {
   /*
-   * `string` is passed as reference because changes must
-      persist between both the functions
-  */
+   * Reallocates `token_index` + 1 more memory to `tokens` as it finds
+     more tokens.
+   
+   * Each memory block allocated is a pointer to string.
+     Thus also allocates memory to hold the characters of the string.
+    
+   * Uses `memcpy` to copy the contents into the allocated block of string.
 
-  char **tokens = NULL;
-  size_t token_index = 0;
+   * Skips whitespaces and only stops adding tokens if finds recognised
+     character like `\0`, `|`, `&` or `;`
+   */
+
+  char **tokens = NULL;   /* Array of strings */
+  size_t token_index = 0; /* Index of a token in `tokens` array */
 
   while (1)
     {
-      /* Add space for one more token; added `1` as `tokens_index` starts from
-       * `0` */
       tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
 
       size_t token_length = find_token_length (*string);
+      tokens[token_index] = malloc (token_length + 1);  /* Added 1 for including null byte */
 
-      /* allocate memory for a single token; have added `1` to include
-       * null-byte */
-      tokens[token_index] = malloc (token_length + 1);
-
-      /* copy the contents of input into `tokens` array */
       memcpy (tokens[token_index], *string, token_length);
-
-      /* add null byte at the end of the token */
       tokens[token_index][token_length] = '\0';
 
-      token_index++; // increment token count
+      token_index++;
 
       /* move the pointer */
       *string = *string + token_length;
@@ -98,7 +100,7 @@ create_tokens (char **string)
         break;
     }
 
-  /* add `NULL` as the last token to signify no more arguments are present */
+  /* add `NULL` as the last token to signify no more tokens are present */
   tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
   tokens[token_index] = NULL;
 
@@ -106,19 +108,15 @@ create_tokens (char **string)
 }
 
 void
-handle_command (char **string)
+handle_element(int element_type, char **string)
 {
-  /* allocate space for one more element */
-  allocate_and_define_elem (COMMAND);
-  elements[element_index].tokens = create_tokens (string);
+  allocate_and_define_elem(element_type);
 
-  element_index++;
-}
+  if(element_type == COMMAND) {
+    /* Only elements of type `COMMAND` need `tokens`. */
+    elements[element_index].tokens = create_tokens(string);
+  }
 
-void
-handle_operand (int operand)
-{
-  allocate_and_define_elem (operand);
   element_index++;
 }
 
@@ -126,31 +124,32 @@ handle_operand (int operand)
 Element *
 tokenize (char *raw_input)
 {
-  /* initialize the global variables */
+  /* Set global variables */
   elements = NULL;
   element_index = 0;
 
   char *string = raw_input;
 
+  /* Traverse through the string */
   while (*string != '\0')
     {
       if (*string == '|' && string[1] == '|')
         {
-          handle_operand (LOGIC_OR);
+          handle_element (LOGIC_OR, &string);
           string = string + 2;
           continue;
         }
 
       if (*string == '&' && string[1] == '&')
         {
-          handle_operand (LOGIC_AND);
+          handle_element (LOGIC_AND, &string);
           string = string + 2;
           continue;
         }
 
       if (*string == ';')
         {
-          handle_operand (NEXT);
+          handle_element (NEXT, &string);
           string++;
           continue;
         }
@@ -164,7 +163,7 @@ tokenize (char *raw_input)
 
       if (isalpha (*string))
         {
-          handle_command (&string);
+          handle_element (COMMAND ,&string);
           continue;
         }
 
@@ -172,10 +171,7 @@ tokenize (char *raw_input)
         {
           fprintf (stderr, "Syntax error: Unrecognised token: %c\n", *string);
 
-          /* Append a `NIL` element,
-           * free the memory allocated
-           * and return NULL
-           */
+          /* Add a dummy element at the end to help `free_elements` */
           allocate_and_define_elem (NIL);
           free_elements (elements);
           return NULL;
