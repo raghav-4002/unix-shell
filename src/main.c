@@ -38,10 +38,11 @@ main (void)
         }
 
       elements = tokenize (raw_input);
-      if(elements != NULL) {
-        parse_and_evaluate (elements);
-        free_elements (elements);
-      }
+      if (elements != NULL)
+        {
+          parse_and_evaluate (elements);
+          free_elements (elements);
+        }
 
       free (raw_input); /* because memory is allocated via getline */
     }

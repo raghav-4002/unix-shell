@@ -162,23 +162,24 @@ tokenize (char *raw_input)
           continue;
         }
 
-      if (isalpha(*string))
+      if (isalpha (*string))
         {
           handle_command (&string);
           continue;
         }
 
-      else {
-        fprintf(stderr, "Syntax error: Unrecognised token: %c\n", *string);
+      else
+        {
+          fprintf (stderr, "Syntax error: Unrecognised token: %c\n", *string);
 
-        /* Append a `NIL` element,
-         * free the memory allocated 
-         * and return NULL
-         */
-        allocate_and_define_elem (NIL);
-        free_elements(elements);
-        return NULL;
-      }
+          /* Append a `NIL` element,
+           * free the memory allocated
+           * and return NULL
+           */
+          allocate_and_define_elem (NIL);
+          free_elements (elements);
+          return NULL;
+        }
     }
 
   /* add a dummy element at the end to signify no more elements */

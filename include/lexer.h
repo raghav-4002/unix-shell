@@ -26,7 +26,7 @@ typedef enum
   NEXT, /* `;` */
 
   ROOT, /* a custom element acting as the root of an AST */
-  NIL, /* No type */
+  NIL,  /* No type */
 } Element_Type;
 
 /*

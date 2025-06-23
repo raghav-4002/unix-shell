@@ -5,10 +5,11 @@ Element *
 parse_condition (Element *elements, size_t *pos)
 {
   Element *left = &elements[*pos];
-    /* `left` must always be a command */ 
-    if(left->element_type != COMMAND) {
-        fprintf(stderr, "Invalid syntax...\n");
-        return NULL;
+  /* `left` must always be a command */
+  if (left->element_type != COMMAND)
+    {
+      fprintf (stderr, "Invalid syntax...\n");
+      return NULL;
     }
 
   while (elements[*pos].element_type != NIL
@@ -24,9 +25,10 @@ parse_condition (Element *elements, size_t *pos)
           (*pos)++;
 
           left->right = &elements[*pos];
-            if(left->right->element_type != COMMAND) {
-                fprintf(stderr, "Invalid syntax...\n");
-                return NULL;
+          if (left->right->element_type != COMMAND)
+            {
+              fprintf (stderr, "Invalid syntax...\n");
+              return NULL;
             }
         }
 
@@ -45,7 +47,8 @@ parse_sequence (Element *elements)
 
   /* left most leaf */
   Element *left = parse_condition (elements, &pos);
-    if(!left) return NULL;  /* in case of error */
+  if (!left)
+    return NULL; /* in case of error */
 
   /* `parse_condition()` will increment `pos` */
   while (elements[pos].element_type != NIL)
@@ -54,7 +57,8 @@ parse_sequence (Element *elements)
       left = &elements[pos];
       pos++;
       left->right = parse_condition (elements, &pos);
-        if(!left->right) return NULL;
+      if (!left->right)
+        return NULL;
     }
 
   Element *ast_root = left;
@@ -63,29 +67,35 @@ parse_sequence (Element *elements)
 }
 
 void
-traverse(Element *ast_root)
+traverse (Element *ast_root)
 {
-    if(ast_root == NULL) return;
+  if (ast_root == NULL)
+    return;
 
-    traverse(ast_root->left);
+  traverse (ast_root->left);
 
-    if(ast_root->element_type == COMMAND) {
-        for (size_t j = 0; ast_root->tokens[j] != NULL; j++) {
-            printf("%s ", ast_root->tokens[j]);
+  if (ast_root->element_type == COMMAND)
+    {
+      for (size_t j = 0; ast_root->tokens[j] != NULL; j++)
+        {
+          printf ("%s ", ast_root->tokens[j]);
         }
-        printf("\n");
+      printf ("\n");
     }
-    else if(ast_root->element_type == LOGIC_AND) {
-        printf("LOGIC AND\n");
+  else if (ast_root->element_type == LOGIC_AND)
+    {
+      printf ("LOGIC AND\n");
     }
-    else if(ast_root->element_type == LOGIC_OR) {
-        printf("LOGIC OR\n");
+  else if (ast_root->element_type == LOGIC_OR)
+    {
+      printf ("LOGIC OR\n");
     }
-    else if(ast_root->element_type == NEXT) {
-        printf("NEXT\n");
+  else if (ast_root->element_type == NEXT)
+    {
+      printf ("NEXT\n");
     }
 
-    traverse(ast_root->right);
+  traverse (ast_root->right);
 }
 
 void
@@ -93,5 +103,6 @@ parse_and_evaluate (Element *elements)
 {
   Element *ast_root = parse_sequence (elements);
 
-    if(ast_root) traverse(ast_root);
+  if (ast_root)
+    traverse (ast_root);
 }
