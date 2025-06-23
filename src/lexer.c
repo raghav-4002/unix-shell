@@ -58,10 +58,10 @@ create_tokens (char **string)
   /*
    * Reallocates `token_index` + 1 more memory to `tokens` as it finds
      more tokens.
-   
+
    * Each memory block allocated is a pointer to string.
      Thus also allocates memory to hold the characters of the string.
-    
+
    * Uses `memcpy` to copy the contents into the allocated block of string.
 
    * Skips whitespaces and only stops adding tokens if finds recognised
@@ -76,7 +76,9 @@ create_tokens (char **string)
       tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
 
       size_t token_length = find_token_length (*string);
-      tokens[token_index] = malloc (token_length + 1);  /* Added 1 for including null byte */
+
+      tokens[token_index]
+          = malloc (token_length + 1); /* Added 1 for including null byte */
 
       memcpy (tokens[token_index], *string, token_length);
       tokens[token_index][token_length] = '\0';
@@ -108,14 +110,15 @@ create_tokens (char **string)
 }
 
 void
-handle_element(int element_type, char **string)
+handle_element (int element_type, char **string)
 {
-  allocate_and_define_elem(element_type);
+  allocate_and_define_elem (element_type);
 
-  if(element_type == COMMAND) {
-    /* Only elements of type `COMMAND` need `tokens`. */
-    elements[element_index].tokens = create_tokens(string);
-  }
+  if (element_type == COMMAND)
+    {
+      /* Only elements of type `COMMAND` need `tokens`. */
+      elements[element_index].tokens = create_tokens (string);
+    }
 
   element_index++;
 }
@@ -163,7 +166,7 @@ tokenize (char *raw_input)
 
       if (isalpha (*string))
         {
-          handle_element (COMMAND ,&string);
+          handle_element (COMMAND, &string);
           continue;
         }
 

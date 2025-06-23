@@ -1,13 +1,13 @@
 #include "../include/parser.h"
-#include <stdio.h>
 
 Element *
 parse_condition (Element *elements, size_t *pos)
 {
   Element *left = &elements[*pos];
-  /* `left` must always be a command */
+
   if (left->element_type != COMMAND)
     {
+      /* `left` must always be an `element` of type `COMMAND` */
       fprintf (stderr, "Invalid syntax...\n");
       return NULL;
     }
@@ -19,17 +19,23 @@ parse_condition (Element *elements, size_t *pos)
       if (elements[*pos].element_type == LOGIC_AND
           || elements[*pos].element_type == LOGIC_OR)
         {
+          Element *parent = &elements[*pos];
+          parent->left = left;
 
-          elements[*pos].left = left;
-          left = &elements[*pos];
+          /* Move to the next child */
           (*pos)++;
 
-          left->right = &elements[*pos];
-          if (left->right->element_type != COMMAND)
+          parent->right = &elements[*pos];
+
+          if (parent->right->element_type != COMMAND)
             {
+              /* right child must be of type `COMMAND` */
               fprintf (stderr, "Invalid syntax...\n");
               return NULL;
             }
+
+          /* Current parent becomes the left child of next parent */
+          left = parent;
         }
 
       (*pos)++;
@@ -44,21 +50,26 @@ Element *
 parse_sequence (Element *elements)
 {
   size_t pos = 0;
-
-  /* left most leaf */
   Element *left = parse_condition (elements, &pos);
-  if (!left)
-    return NULL; /* in case of error */
 
-  /* `parse_condition()` will increment `pos` */
+  /* In case of error */
+  if (!left)
+    return NULL;
+
   while (elements[pos].element_type != NIL)
     {
-      elements[pos].left = left;
-      left = &elements[pos];
+      Element *parent = &elements[pos];
+      parent->left = left;
+
+      /* move to next child */
       pos++;
-      left->right = parse_condition (elements, &pos);
-      if (!left->right)
+
+      parent->right = parse_condition (elements, &pos);
+      if (!parent->right)
         return NULL;
+
+      /* Current parent becomes left child of next parent */
+      left = parent;
     }
 
   Element *ast_root = left;
