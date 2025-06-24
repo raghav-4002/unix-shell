@@ -7,13 +7,13 @@ const char *builtins[] = {
 
 size_t builtins_count = sizeof (builtins) / sizeof (builtins[0]);
 
-void
+Return_value
 change_dir (char **tokens)
 {
   if (tokens[2] != NULL)
     {
       fprintf (stderr, "Too many arguments for cd...\n");
-      return;
+      return RETURN_FAILURE;
     }
 
   char *directory = tokens[1];
@@ -33,18 +33,24 @@ change_dir (char **tokens)
           fprintf (stderr, "cd: %s: Permission denied\n", tokens[1]);
           break;
         }
+      
+      return RETURN_FAILURE;
     }
+
+  return RETURN_SUCCESS;
 }
 
-void
+Return_value
 execute_and_exit (char **tokens)
 {
   /* make a copy of tokens, ignoring 'exec' */
   char **executable = &tokens[1];
   execvp (executable[0], executable);
+
+  return RETURN_SUCCESS;
 }
 
-void
+Return_value
 display_help (void)
 {
   printf ("Available builtins:\n");
@@ -54,14 +60,19 @@ display_help (void)
     {
       printf (" %s\n", builtins[i]);
     }
+
+  return RETURN_SUCCESS;
 }
 
 void
 handle_builtin (Element *node)
 {
+  char **tokens = node->tokens;
+  Return_value return_value;
+
   if (!strcmp (tokens[0], "cd"))
     {
-      change_dir (tokens);
+      return_value = change_dir (tokens);
     }
   else if (!strcmp (tokens[0], "exit"))
     {
@@ -70,12 +81,14 @@ handle_builtin (Element *node)
     }
   else if (!strcmp (tokens[0], "exec"))
     {
-      execute_and_exit (tokens);
+      return_value = execute_and_exit (tokens);
     }
   else if (!strcmp (tokens[0], "help"))
     {
-      display_help ();
+      return_value = display_help ();
     }
+
+  node->return_value = return_value;
 }
 
 bool

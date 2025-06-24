@@ -59,7 +59,7 @@ execute(Element *node)
   if (is_builtin(node)) {
     handle_builtin(node);
   } else {
-    handle_exec(node);
+    // handle_exec(node);
   }
 }
 
