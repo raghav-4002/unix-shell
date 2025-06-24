@@ -33,7 +33,7 @@ change_dir (char **tokens)
           fprintf (stderr, "cd: %s: Permission denied\n", tokens[1]);
           break;
         }
-      
+
       return RETURN_FAILURE;
     }
 
