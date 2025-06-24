@@ -37,3 +37,35 @@ free_elements (Element *elements)
 
   free (elements);
 }
+
+void
+traverse_ast (Element *ast_root)
+{
+  if (ast_root == NULL)
+    return;
+
+  traverse_ast (ast_root->left);
+
+  if (ast_root->element_type == COMMAND)
+    {
+      for (size_t j = 0; ast_root->tokens[j] != NULL; j++)
+        {
+          printf ("%s ", ast_root->tokens[j]);
+        }
+      printf ("\n");
+    }
+  else if (ast_root->element_type == LOGIC_AND)
+    {
+      printf ("LOGIC AND\n");
+    }
+  else if (ast_root->element_type == LOGIC_OR)
+    {
+      printf ("LOGIC OR\n");
+    }
+  else if (ast_root->element_type == NEXT)
+    {
+      printf ("NEXT\n");
+    }
+
+  traverse_ast (ast_root->right);
+}

@@ -39,8 +39,7 @@ main (void)
           continue;
         }
 
-      elements
-          = tokenize (raw_input); /* Will return `NULL` if error happens */
+      elements = tokenize (raw_input); // Will return `NULL` if error happens
       if (elements)
         {
           parse_and_evaluate (elements);
