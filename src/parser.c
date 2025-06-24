@@ -83,5 +83,6 @@ parse_and_evaluate (Element *elements)
 {
   Element *ast_root = parse_sequence (elements);
 
-  if(ast_root) evaluate(ast_root);
+  if (ast_root)
+    evaluate (ast_root);
 }
