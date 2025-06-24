@@ -1,7 +1,7 @@
 #include "../include/exec_handling.h"
 
 void
-handle_exec (char **tokens)
+handle_exec (Element *node)
 {
   /* create a child process */
   pid_t pid = fork ();

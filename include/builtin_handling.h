@@ -8,7 +8,9 @@
 #include <string.h>
 #include <unistd.h>
 
-void handle_builtin (char **tokens);
-bool is_builtin (char *token);
+#include "lexer.h"
+
+void handle_builtin (Element *node);
+bool is_builtin (Element *node);
 
 #endif

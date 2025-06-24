@@ -57,7 +57,7 @@ display_help (void)
 }
 
 void
-handle_builtin (char **tokens)
+handle_builtin (Element *node)
 {
   if (!strcmp (tokens[0], "cd"))
     {
@@ -79,8 +79,10 @@ handle_builtin (char **tokens)
 }
 
 bool
-is_builtin (char *token)
+is_builtin (Element *node)
 {
+  char *token = node->tokens[0];
+
   for (size_t i = 0; i < builtins_count; i++)
     {
       if (!strcmp (builtins[i], token))

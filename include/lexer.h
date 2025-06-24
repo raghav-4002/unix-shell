@@ -6,12 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum return_values
+typedef enum Return_value
 {
   RETURN_SUCCESS = 1,
   RETURN_FAILURE = -1,
   NOT_DEFINED_YET = 0,
-};
+} Return_value;
 
 typedef enum
 {
@@ -59,7 +59,7 @@ typedef struct Element
   struct Element *left;  /* left child in abstract syntax tree */
   struct Element *right; /* right child in the same tree */
 
-  int return_value; /* relevent only while executing */
+  Return_value return_value; /* relevent only while executing */
 } Element;
 
 Element *tokenize (char *raw_input);
