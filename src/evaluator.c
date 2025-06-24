@@ -54,7 +54,22 @@ stack_pop()
 void
 handle_logic_operator(Element *operator)
 {
+  int left_return_val = operator->left->return_value;
 
+  if(left_return_val == RETURN_FAILURE && operator->element_type == LOGIC_AND) {
+    operator->return_value = 0;
+    return;
+  }
+
+  if(left_return_val == RETURN_SUCCESS && operator->element_type == LOGIC_OR) {
+    operator->return_value = 1;
+    return;
+  }
+
+  // execute right child and get it's return value in right_return_val
+  int right_return_val;
+
+  operator->return_value = right_return_val;
 }
 
 void
