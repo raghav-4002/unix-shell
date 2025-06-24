@@ -1,9 +1,11 @@
 #include "../include/evaluator.h"
 
+/* =================== Stack ========================= */
+
 /* Creating a stack data structure */
 typedef struct stack
 {
-  Element element;
+  Element *element;
   struct stack *prev;
 } Stack;
 
@@ -14,7 +16,7 @@ Stack *top = NULL;
  * Pushs an item of type `Element` to stack
  */
 void
-stack_push (Element element)
+stack_push (Element *element)
 {
   if (!top)
     {
@@ -35,10 +37,10 @@ stack_push (Element element)
  * Returns the `element` from top of stack.
  * Frees the memory associated with the top.
  */
-Element
+Element *
 stack_pop()
 {
-  Element element = top->element;
+  Element *element = top->element;
   Stack *ptr = top;
 
   top = top->prev;
@@ -47,8 +49,39 @@ stack_pop()
   return element;
 }
 
+/* ================= Evaluation =======================*/
+
 void
-evaluate (Element *ast_root)
+handle_logic_operator(Element *operator)
 {
-  // evaluates the expression and executes each command
+
+}
+
+void
+evaluate (Element *root)
+{
+  Element *node = root;
+
+  while(node->element_type != COMMAND) {
+    stack_push(node);
+    node = node->left;
+  }
+
+  //execute node;
+
+  while(top != NULL) {
+    Element *operator = stack_pop();
+
+    switch(operator->element_type) {
+      case LOGIC_AND: case LOGIC_OR:
+        handle_logic_operator(operator);
+        break;
+
+      case NEXT:
+        node = operator->right;
+        evaluate(node);
+
+        break;
+    }
+  }
 }
