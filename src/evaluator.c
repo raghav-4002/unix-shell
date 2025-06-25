@@ -62,7 +62,7 @@ handle_command (Element *node)
     }
   else
     {
-      handle_exec(node);
+      handle_exec (node);
     }
 }
 
