@@ -1,7 +1,5 @@
 #include "../include/utils.h"
 
-#include <stddef.h>
-
 /*
  * This function frees the memory allocated to elements of an array
    and the array itself.
