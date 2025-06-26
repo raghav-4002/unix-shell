@@ -1,9 +1,7 @@
-# It is underconstruction right now, won't work.
-
 # A Unix shell written in C
 **Note**: *This project is under construction. It lacks a lot of basic functionalities that you might expect from a shell like `bash` or `zsh`.*
 
-# How to use it:
+# How to use:
 **Note**: *This shell is only tested on Linux as of now. It may or may not work on MacOs. It doesn't work on Windows at all.*
 
 - Firstly, clone the repo:
@@ -39,21 +37,19 @@ gcc -Iinclude src/*.c -o shell
 - Can execute multiple commands separated by semicolons.
 
 ## Currently working on:
-- [ ] Allowing the user to edit the command before pressing enter.
-- [ ] Tab auto-completion.
+- [x] Allowing the user to edit the command before pressing enter.
 - [x] Executing semi-colon separated commands.
-- [ ] Adding `seash_history` file and history preview using arrow key and `history` command.
-
-## Advanced features to be added in near future:
-- IO redirection.
-- Pipelining.
-- Shell globing.
-- Job control.
-- A `shrc` file support.
-- Scripting capabilities (maybe).
+- [ ] Advanced logical precedence using parenthesis.
+- [ ] Adding support for Pipelining.
+- [ ] Adding IO redirection.
+- [ ] Job control.
+- [ ] Shell globbing and expansion.
+- [ ] Tab auto-completion.
+- [ ] Adding `.rc` file and history preview using arrow key and `history` command.
+- [ ] Scripting capabilities.
 
 # How it works:
-- Accepts user input.
-- Tokenizes the input into tokens separated by space.
-- Parses those tokens to check if it's a built-in or an executable.
-- Handles basic errors like command not found and directory not found.
+- Accepts user input in raw string format.
+- Tokenizes the input using lexical analysis, separating commands from operators like `&&` and `||`, into components named `elements`.
+- Parses these `elements` into an *abstract syntax tree* according to the precedence of logical operators.
+- Traverses the tree, executing commands.
