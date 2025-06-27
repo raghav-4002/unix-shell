@@ -64,7 +64,7 @@ display_help (void)
   return RETURN_SUCCESS;
 }
 
-void
+bool
 handle_builtin (Element *node)
 {
   char **tokens = node->tokens;
@@ -87,20 +87,11 @@ handle_builtin (Element *node)
     {
       return_value = display_help ();
     }
-
-  node->return_value = return_value;
-}
-
-bool
-is_builtin (Element *node)
-{
-  char *token = node->tokens[0];
-
-  for (size_t i = 0; i < builtins_count; i++)
+  else
     {
-      if (!strcmp (builtins[i], token))
-        return true;
+      return false;
     }
 
-  return false;
+  node->return_value = return_value;
+  return true;
 }

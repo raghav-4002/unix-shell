@@ -56,11 +56,7 @@ stack_pop ()
 void
 handle_command (Element *node)
 {
-  if (is_builtin (node))
-    {
-      handle_builtin (node);
-    }
-  else
+  if (!handle_builtin (node))
     {
       handle_exec (node);
     }

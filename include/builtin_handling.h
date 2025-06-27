@@ -10,7 +10,6 @@
 
 #include "lexer.h"
 
-void handle_builtin (Element *node);
-bool is_builtin (Element *node);
+bool handle_builtin (Element *node);
 
 #endif
