@@ -10,7 +10,7 @@ execute (char **tokens)
   if (return_value == -1 && errno == ENOENT)
     {
       fprintf (stderr, "%s: command not found...\n", tokens[0]);
-      return -1;
+      exit(-1);
     }
 
   /* else return the return value of executed program */
