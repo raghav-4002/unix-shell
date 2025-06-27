@@ -1,5 +1,4 @@
 #include "../include/lexer.h"
-#include "../include/utils.h"
 
 Element *elements;
 size_t element_index;
@@ -136,48 +135,36 @@ tokenize (char *raw_input)
   /* Traverse through the string */
   while (*string != '\0')
     {
-      if (*string == '|' && string[1] == '|')
+      switch (*string)
         {
-          handle_element (LOGIC_OR, &string);
-          string = string + 2;
-          continue;
-        }
+        case '|':
+          if (string[1] == '|')
+            {
+              handle_element (LOGIC_OR, &string);
+              string = string + 2;
+              break;
+            }
 
-      if (*string == '&' && string[1] == '&')
-        {
-          handle_element (LOGIC_AND, &string);
-          string = string + 2;
-          continue;
-        }
+        case '&':
+          if (string[1] == '&')
+            {
+              handle_element (LOGIC_AND, &string);
+              string = string + 2;
+              break;
+            }
 
-      if (*string == ';')
-        {
+        case ';':
           handle_element (NEXT, &string);
           string++;
-          continue;
-        }
+          break;
 
-      if (isspace (*string))
-        {
-          /* skip space */
+        case ' ':
           string++;
-          continue;
-        }
+          break;
 
-      if (isalpha (*string))
-        {
+        default:
           handle_element (COMMAND, &string);
-          continue;
-        }
-
-      else
-        {
-          fprintf (stderr, "Syntax error: Unrecognised token: %c\n", *string);
-
-          /* Add a dummy element at the end to help `free_elements` */
-          allocate_and_define_elem (NIL);
-          free_elements (elements);
-          return NULL;
+          break;
         }
     }
 
