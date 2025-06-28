@@ -7,6 +7,8 @@ const char *builtins[] = {
 
 size_t builtins_count = sizeof (builtins) / sizeof (builtins[0]);
 
+#define MAX_DIR_SIZE 99
+
 Return_value
 change_dir (char **tokens)
 {
@@ -16,7 +18,16 @@ change_dir (char **tokens)
       return RETURN_FAILURE;
     }
 
-  char *directory = tokens[1];
+  char directory[MAX_DIR_SIZE];
+
+  if (tokens[1] == NULL)
+    {
+      snprintf (directory, sizeof (directory), "/home/%s", getlogin ());
+    }
+  else
+    {
+      memcpy (directory, tokens[1], strlen(tokens[1]) + 1);
+    }
 
   int return_value = chdir (directory);
 
@@ -25,11 +36,11 @@ change_dir (char **tokens)
     {
       switch (errno)
         {
-        case ENONET: // directory or file doesn't exist
+        case ENONET: /* Directory or file doesn't exist */
           fprintf (stderr, "cd: %s: No such file or directory\n", tokens[1]);
           break;
 
-        case EACCES: // permission for accessing directory denied
+        case EACCES: /* Directory access permission denied */
           fprintf (stderr, "cd: %s: Permission denied\n", tokens[1]);
           break;
         }
