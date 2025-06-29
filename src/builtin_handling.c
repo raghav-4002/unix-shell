@@ -1,4 +1,5 @@
 #include "../include/builtin_handling.h"
+#include <stdio.h>
 
 /* all supported builtins; some are under construction... */
 const char *builtins[] = {
@@ -22,17 +23,17 @@ change_dir (char **tokens)
 
   if (tokens[1] == NULL)
     {
-      snprintf (directory, sizeof (directory), "/home/%s", getlogin ());
+      snprintf (directory, MAX_DIR_SIZE, "/home/%s", getlogin ());
     }
   else
     {
-      memcpy (directory, tokens[1], strlen(tokens[1]) + 1);
+      snprintf(directory, MAX_DIR_SIZE, "%s", tokens[1]);
     }
 
-  int return_value = chdir (directory);
+  int return_val = chdir (directory);
 
   /* handle directory changing errors */
-  if (return_value == -1)
+  if (return_val == -1)
     {
       switch (errno)
         {
