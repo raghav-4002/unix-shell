@@ -1,5 +1,6 @@
 #include "../include/builtin_handling.h"
-#include <stdio.h>
+#include <pwd.h>
+#include <sys/types.h>
 
 /* all supported builtins; some are under construction... */
 const char *builtins[] = {
@@ -8,52 +9,33 @@ const char *builtins[] = {
 
 size_t builtins_count = sizeof (builtins) / sizeof (builtins[0]);
 
-#define MAX_DIR_SIZE 99
-
 Return_value
 change_dir (char **tokens)
 {
   if (tokens[2] != NULL)
     {
-      fprintf (stderr, "Too many arguments for cd...\n");
+      fprintf (stderr, "cd: too many arguments\n");
       return RETURN_FAILURE;
     }
 
-  char directory[MAX_DIR_SIZE];
-  int str_ret_val;
+  int return_val;
 
+  /* if no argument is provided */
   if (tokens[1] == NULL)
     {
-      str_ret_val
-          = snprintf (directory, MAX_DIR_SIZE, "/home/%s", getlogin ());
+      __uid_t uid = getuid (); /* user id */
+
+      /* Change to home directory of user with id `uid` */
+      return_val = chdir (getpwuid (uid)->pw_dir);
     }
   else
     {
-      str_ret_val = snprintf (directory, MAX_DIR_SIZE, "%s", tokens[1]);
+      return_val = chdir (tokens[1]);
     }
 
-  if (str_ret_val >= MAX_DIR_SIZE)
-    {
-      fprintf (stderr, "cd: Maximum allowed path size exceeded\n");
-      return RETURN_FAILURE;
-    }
-
-  int return_val = chdir (directory);
-
-  /* handle directory changing errors */
   if (return_val == -1)
     {
-      switch (errno)
-        {
-        case ENOENT: /* Directory or file doesn't exist */
-          fprintf (stderr, "cd: %s: No such file or directory\n", tokens[1]);
-          break;
-
-        case EACCES: /* Directory access permission denied */
-          fprintf (stderr, "cd: %s: Permission denied\n", tokens[1]);
-          break;
-        }
-
+      perror ("cd");
       return RETURN_FAILURE;
     }
 
@@ -67,7 +49,7 @@ execute_and_exit (char **tokens)
   char **executable = &tokens[1];
   execvp (executable[0], executable);
 
-  return RETURN_SUCCESS;  /* returned just for consistency */
+  return RETURN_SUCCESS; /* returned just for consistency */
 }
 
 Return_value
