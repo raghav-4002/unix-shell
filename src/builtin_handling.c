@@ -36,7 +36,7 @@ change_dir (char **tokens)
     {
       switch (errno)
         {
-        case ENONET: /* Directory or file doesn't exist */
+        case ENOENT: /* Directory or file doesn't exist */
           fprintf (stderr, "cd: %s: No such file or directory\n", tokens[1]);
           break;
 
