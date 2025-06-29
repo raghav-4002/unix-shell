@@ -20,14 +20,22 @@ change_dir (char **tokens)
     }
 
   char directory[MAX_DIR_SIZE];
+  int str_ret_val;
 
   if (tokens[1] == NULL)
     {
-      snprintf (directory, MAX_DIR_SIZE, "/home/%s", getlogin ());
+      str_ret_val
+          = snprintf (directory, MAX_DIR_SIZE, "/home/%s", getlogin ());
     }
   else
     {
-      snprintf(directory, MAX_DIR_SIZE, "%s", tokens[1]);
+      str_ret_val = snprintf (directory, MAX_DIR_SIZE, "%s", tokens[1]);
+    }
+
+  if (str_ret_val >= MAX_DIR_SIZE)
+    {
+      fprintf (stderr, "cd: Maximum allowed path size exceeded\n");
+      return RETURN_FAILURE;
     }
 
   int return_val = chdir (directory);
@@ -59,7 +67,7 @@ execute_and_exit (char **tokens)
   char **executable = &tokens[1];
   execvp (executable[0], executable);
 
-  return RETURN_SUCCESS;
+  return RETURN_SUCCESS;  /* returned just for consistency */
 }
 
 Return_value
