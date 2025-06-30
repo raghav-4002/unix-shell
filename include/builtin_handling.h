@@ -2,10 +2,12 @@
 #define BUILTIN_HANDLING_H
 
 #include <errno.h>
+#include <pwd.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "lexer.h"

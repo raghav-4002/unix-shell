@@ -1,6 +1,5 @@
 #include "../include/builtin_handling.h"
-#include <pwd.h>
-#include <sys/types.h>
+#include <stdio.h>
 
 /* all supported builtins; some are under construction... */
 const char *builtins[] = {
@@ -45,11 +44,34 @@ change_dir (char **tokens)
 Return_value
 execute_and_exit (char **tokens)
 {
+  if (tokens[1] == NULL)
+    {
+      /* If no args is provided to `exec`, just return */
+      return RETURN_SUCCESS;
+    }
+
   /* make a copy of tokens, ignoring 'exec' */
   char **executable = &tokens[1];
-  execvp (executable[0], executable);
 
-  return RETURN_SUCCESS; /* returned just for consistency */
+  int return_val = execvp (executable[0], executable);
+
+  /* error occurs */
+  if (return_val == -1)
+    {
+      if (errno == ENOENT)
+        {
+          fprintf (stderr, "%s: not found\n", executable[0]);
+        }
+      else
+        {
+          perror (tokens[0]);
+        }
+
+      return RETURN_FAILURE;
+    }
+
+  /* This line is never reached if execvp succeeds */
+  return RETURN_SUCCESS;
 }
 
 Return_value
