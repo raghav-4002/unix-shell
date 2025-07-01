@@ -13,6 +13,7 @@ read_input (void)
   if (line_len == -1 || line_len == 1)
     {
       /* in case of error, or if user just presses enter */
+      free(raw_input);
       return NULL;
     }
 

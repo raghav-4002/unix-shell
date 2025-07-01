@@ -1,5 +1,4 @@
 #include "../include/exec_handling.h"
-#include <stdlib.h>
 
 int
 execute (char **tokens)
@@ -32,20 +31,32 @@ handle_exec (Element *node)
   /* create a child process */
   pid_t pid = fork ();
 
-  if (pid == 0)
+  int wstatus;
+  int return_val;
+
+  switch (pid)
     {
+    case 0:
       /* execute the command in the child process */
       execute (node->tokens);
-    }
-  else
-    {
-      /* make the parent process (shell) wait for child to complete the
-      command
-       */
-      int return_val;
-      wait (&return_val);
 
-      if (return_val == EXIT_SUCCESS)
+      break;
+
+    case -1:
+      /* handle fork failing */
+      perror (node->tokens[0]);
+      node->return_value = RETURN_FAILURE;
+
+      break;
+
+    default:
+      /*
+       * make the parent process (shell) wait for child to complete the
+         command
+       */
+      return_val = wait (&wstatus);
+
+      if (wstatus == EXIT_SUCCESS)
         {
           node->return_value = RETURN_SUCCESS;
         }
@@ -53,5 +64,7 @@ handle_exec (Element *node)
         {
           node->return_value = RETURN_FAILURE;
         }
+
+      break;
     }
 }

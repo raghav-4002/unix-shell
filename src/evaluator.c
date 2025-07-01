@@ -17,22 +17,36 @@ Stack *top = NULL;
 /*
  * Pushs an item of type `Element` to stack
  */
-void
+int
 stack_push (Element *element)
 {
   if (!top)
     {
       top = malloc (sizeof (*top));
+
+      if (top == NULL)
+        {
+          /* memory allocation failed */
+          return -1;
+        }
       top->prev = NULL;
     }
   else
     {
       Stack *ptr = malloc (sizeof (*ptr));
+
+      if (top == NULL)
+        {
+          return -1;
+        }
+
       ptr->prev = top;
       top = ptr;
     }
 
   top->element = element;
+
+  return 0;
 }
 
 /*
@@ -101,7 +115,22 @@ evaluate (Element *root)
   /* Push nodes to stack until node of type `COMMAND` is not found */
   while (node->element_type != COMMAND)
     {
-      stack_push (node);
+      int return_val = stack_push (node);
+
+      /* memory allocation fails */
+      if (return_val == -1)
+        {
+          fprintf (stderr, "Encountered some error...\n");
+
+          /* Free allocated memory */
+          while (top)
+            {
+              stack_pop ();
+            }
+
+          return;
+        }
+
       node = node->left;
     }
 
