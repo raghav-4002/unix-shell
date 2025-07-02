@@ -1,34 +1,34 @@
 #include "../include/parser.h"
 #include "../include/evaluator.h"
 
-Element *
-parse_condition (Element *elements, size_t *pos)
+Token *
+parse_condition (Token *tokens, size_t *pos)
 {
-  Element *left = &elements[*pos];
+  Token *left = &tokens[*pos];
 
-  if (left->element_type != COMMAND)
+  if (left->type != COMMAND)
     {
       /* `left` must always be an `element` of type `COMMAND` */
       fprintf (stderr, "Invalid syntax...\n");
       return NULL;
     }
 
-  while (elements[*pos].element_type != NIL
-         && elements[*pos].element_type != NEXT)
+  while (tokens[*pos].type != NIL
+         && tokens[*pos].type != NEXT)
     {
 
-      if (elements[*pos].element_type == LOGIC_AND
-          || elements[*pos].element_type == LOGIC_OR)
+      if (tokens[*pos].type == LOGIC_AND
+          || tokens[*pos].type == LOGIC_OR)
         {
-          Element *parent = &elements[*pos];
+          Token *parent = &tokens[*pos];
           parent->left = left;
 
           /* Move to the next child */
           (*pos)++;
 
-          parent->right = &elements[*pos];
+          parent->right = &tokens[*pos];
 
-          if (parent->right->element_type != COMMAND)
+          if (parent->right->type != COMMAND)
             {
               /* right child must be of type `COMMAND` */
               fprintf (stderr, "Invalid syntax...\n");
@@ -42,30 +42,30 @@ parse_condition (Element *elements, size_t *pos)
       (*pos)++;
     }
 
-  Element *root = left;
+  Token *root = left;
 
   return root;
 }
 
-Element *
-parse_sequence (Element *elements)
+Token *
+parse_sequence (Token *tokens)
 {
   size_t pos = 0;
-  Element *left = parse_condition (elements, &pos);
+  Token *left = parse_condition (tokens, &pos);
 
   /* In case of error */
   if (!left)
     return NULL;
 
-  while (elements[pos].element_type != NIL)
+  while (tokens[pos].type != NIL)
     {
-      Element *parent = &elements[pos];
+      Token *parent = &tokens[pos];
       parent->left = left;
 
       /* move to next child */
       pos++;
 
-      parent->right = parse_condition (elements, &pos);
+      parent->right = parse_condition (tokens, &pos);
       if (!parent->right)
         return NULL;
 
@@ -73,15 +73,15 @@ parse_sequence (Element *elements)
       left = parent;
     }
 
-  Element *ast_root = left;
+  Token *ast_root = left;
 
   return ast_root;
 }
 
 void
-parse_and_evaluate (Element *elements)
+parse_and_evaluate (Token *tokens)
 {
-  Element *ast_root = parse_sequence (elements);
+  Token *ast_root = parse_sequence (tokens);
 
   if (ast_root)
     evaluate (ast_root);
