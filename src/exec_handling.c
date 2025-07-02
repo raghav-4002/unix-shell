@@ -1,20 +1,20 @@
 #include "../include/exec_handling.h"
 
 int
-execute (char **tokens)
+execute (char **argv)
 {
-  int return_value = execvp (tokens[0], tokens);
+  int return_value = execvp (argv[0], argv);
 
   /* If error occurs */
   if (return_value == -1)
     {
       if (errno == ENOENT)
         {
-          fprintf (stderr, "%s: command not found\n", tokens[0]);
+          fprintf (stderr, "%s: command not found\n", argv[0]);
         }
       else
         {
-          perror (tokens[0]);
+          perror (argv[0]);
         }
       exit (EXIT_FAILURE);
     }
@@ -26,7 +26,7 @@ execute (char **tokens)
 }
 
 void
-handle_exec (Element *node)
+handle_exec (Token *node)
 {
   /* create a child process */
   pid_t pid = fork ();
@@ -38,14 +38,14 @@ handle_exec (Element *node)
     {
     case 0:
       /* execute the command in the child process */
-      execute (node->tokens);
+      execute (node->args);
 
       break;
 
     case -1:
       /* handle fork failing */
-      perror (node->tokens[0]);
-      node->return_value = RETURN_FAILURE;
+      perror (node->args[0]);
+      node->return_status = RETURN_FAILURE;
 
       break;
 
@@ -58,11 +58,11 @@ handle_exec (Element *node)
 
       if (wstatus == EXIT_SUCCESS)
         {
-          node->return_value = RETURN_SUCCESS;
+          node->return_status = RETURN_SUCCESS;
         }
       else
         {
-          node->return_value = RETURN_FAILURE;
+          node->return_status = RETURN_FAILURE;
         }
 
       break;

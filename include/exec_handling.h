@@ -8,6 +8,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-void handle_exec (Element *node);
+void handle_exec (Token *node);
 
 #endif
