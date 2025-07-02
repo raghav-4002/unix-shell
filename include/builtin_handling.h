@@ -12,6 +12,6 @@
 
 #include "lexer.h"
 
-bool handle_builtin (Element *node);
+bool handle_builtin (Token *node);
 
 #endif
