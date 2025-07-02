@@ -6,28 +6,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum Return_value
+typedef enum Token_type
 {
-  RETURN_SUCCESS = 1,
-  RETURN_FAILURE = -1,
-  NOT_DEFINED_YET = 0,
-} Return_value;
-
-typedef enum
-{
-  COMMAND, /* like `ls -al` */
+  COMMAND,     /* like `ls -al` */
 
   PIPE,        /* '|' */
   BG_OPERATOR, /* '&' */
 
-  LOGIC_OR,  /* `||` */
-  LOGIC_AND, /* `&&` */
+  LOGIC_OR,    /* `||` */
+  LOGIC_AND,   /* `&&` */
+  NEXT,        /* `;` */
 
-  NEXT, /* `;` */
+  NIL,         /* No type */
 
-  ROOT, /* a custom element acting as the root of an AST */
-  NIL,  /* No type */
-} Element_Type;
+} Token_type;
+
+typedef enum Return_status
+{
+  RETURN_SUCCESS  =  0,
+  RETURN_FAILURE  =  1,
+  NOT_DEFINED_YET = -1,
+
+} Return_status;
 
 /*
  * After passing the input to the lexer, the
@@ -51,16 +51,18 @@ typedef enum
    parser will have to do comparatively less work.
 */
 
-typedef struct Element
+typedef struct Token
 {
-  Element_Type element_type;
-  char **tokens; /* relevent only for `element_type` `COMMAND` */
+  Token_type type;
 
-  struct Element *left;  /* left child in abstract syntax tree */
-  struct Element *right; /* right child in the same tree */
+  char **args;                 /* relevent only for `element_type` `COMMAND` */
 
-  Return_value return_value; /* relevent only while executing */
-} Element;
+  struct Element *left;        /* left child in abstract syntax tree */
+  struct Element *right;       /* right child in the same tree */
+
+  Return_status return_status; /* relevent only while executing */
+
+} Token;
 
 Element *tokenize (char *raw_input);
 
