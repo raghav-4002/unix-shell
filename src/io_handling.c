@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "../include/io_handling.h"
 
 char *
@@ -23,18 +28,48 @@ read_input (void)
   return raw_input;
 }
 
+#define FALLBACK_USERNAME "<username>"
+#define FALLBACK_HOSTNAME "<hostname>"
+#define FALLBACK_CWD "<current working directory>"
+
+#define HOST_NAME_LEN 4096
+
 void
 display_prompt (void)
 {
-  char *username;
-  username = getlogin ();
+  /* Get username (returns NULL if error) */
+  char *username = getlogin ();
 
-  char hostname[256];
-  gethostname (hostname, sizeof (hostname));
+  if (!username)
+    {
+      perror ("shell: failed to get username");
+      username = FALLBACK_USERNAME; /* placeholder, in case of error */
+    }
 
-  char working_dir[256];
-  getcwd (working_dir, sizeof (working_dir));
+  char hostname[HOST_NAME_LEN];
 
-  printf ("\n{%s@%s}-[%s]\n", username, hostname, working_dir);
+  /* Get hostname (returns -1 on error) */
+  int return_val = gethostname (hostname, HOST_NAME_LEN);
+
+  if (return_val == -1)
+    {
+      perror ("shell: failed to get hostname");
+      snprintf (hostname, HOST_NAME_LEN, FALLBACK_HOSTNAME); /* placeholder */
+    }
+
+  /* Get current working directory (returns NULL if error) */
+  char *working_dir = getcwd (NULL, 0);
+
+  if (!working_dir)
+    {
+      perror ("shell: failed to get current working directory");
+      working_dir = FALLBACK_CWD;
+    }
+
+  /* Display the prompt */
+  printf ("\033[1;32m{%s@%s}\033[0m-[%s]\n", username, hostname, working_dir);
   printf ("$ ");
+
+  /* free memory allocated via `getcwd` */
+  free (working_dir);
 }
