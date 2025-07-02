@@ -3,6 +3,6 @@
 
 #include "lexer.h"
 
-void evaluate (Element *ast_root);
+void evaluate (Token *ast_root);
 
 #endif
