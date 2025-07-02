@@ -4,8 +4,7 @@
 #include "../include/lexer.h"
 #include <stdlib.h>
 
-void free_array_of_arrays (char **array, size_t array_size);
-void free_elements (Token *tokens);
+void free_tokens (Token *tokens);
 void traverse_ast (Token *ast_root);
 
 #endif

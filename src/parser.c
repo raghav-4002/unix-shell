@@ -13,12 +13,10 @@ parse_condition (Token *tokens, size_t *pos)
       return NULL;
     }
 
-  while (tokens[*pos].type != NIL
-         && tokens[*pos].type != NEXT)
+  while (tokens[*pos].type != NIL && tokens[*pos].type != NEXT)
     {
 
-      if (tokens[*pos].type == LOGIC_AND
-          || tokens[*pos].type == LOGIC_OR)
+      if (tokens[*pos].type == LOGIC_AND || tokens[*pos].type == LOGIC_OR)
         {
           Token *parent = &tokens[*pos];
           parent->left = left;

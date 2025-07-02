@@ -7,5 +7,6 @@
 #include <unistd.h>
 
 char *read_input (void);
+void display_prompt (void);
 
 #endif
