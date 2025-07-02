@@ -25,7 +25,7 @@ main (void)
   /* Stores the user input string */
   char *raw_input = NULL;
 
-  Element *elements = NULL;
+  Token *tokens = NULL;
 
   while (1)
     {
@@ -39,11 +39,11 @@ main (void)
           continue;
         }
 
-      elements = tokenize (raw_input); // Will return `NULL` if error happens
-      if (elements)
+      tokens = tokenize (raw_input); // Will return `NULL` if error happens
+      if (tokens)
         {
-          parse_and_evaluate (elements);
-          free_elements (elements);
+          parse_and_evaluate (tokens);
+          free_elements (tokens);
         }
 
       free (raw_input); /* free memory allocated via getline */
