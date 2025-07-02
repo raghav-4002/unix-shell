@@ -1,7 +1,7 @@
 #include "../include/lexer.h"
 
-Element *elements;
-size_t element_index;
+Token *tokens;
+size_t token_index;
 
 /*
  * Reallocates space in `elements` array to
@@ -13,19 +13,19 @@ void
 allocate_and_define_elem (int element_type)
 {
   /* `element_index` starts with 0, thus need to add `1` */
-  elements = realloc (elements, sizeof (*elements) * (element_index + 1));
+  tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
 
-  elements[element_index].element_type = element_type;
-  elements[element_index].left = NULL;
-  elements[element_index].right = NULL;
+  tokens[token_index].type = element_type;
+  tokens[token_index].left = NULL;
+  tokens[token_index].right = NULL;
 
-  elements[element_index].return_value
+  tokens[token_index].return_status
       = NOT_DEFINED_YET; /* same for every element */
 
   if (element_type != COMMAND)
     {
       /* `COMMAND` type will have an array of strings */
-      elements[element_index].tokens = NULL;
+      tokens[token_index].args = NULL;
     }
 }
 
@@ -116,19 +116,19 @@ handle_element (int element_type, char **string)
   if (element_type == COMMAND)
     {
       /* Only elements of type `COMMAND` need `tokens`. */
-      elements[element_index].tokens = create_tokens (string);
+      tokens[token_index].args = create_tokens (string);
     }
 
-  element_index++;
+  token_index++;
 }
 
 /* Tokenizes a string and returns an array of `Element` */
-Element *
+Token *
 tokenize (char *raw_input)
 {
   /* Set global variables */
-  elements = NULL;
-  element_index = 0;
+  tokens = NULL;
+  token_index = 0;
 
   char *string = raw_input;
 
@@ -171,5 +171,5 @@ tokenize (char *raw_input)
   /* add a dummy element at the end to signify no more elements */
   allocate_and_define_elem (NIL);
 
-  return elements;
+  return tokens;
 }
