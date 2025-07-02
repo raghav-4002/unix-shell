@@ -38,13 +38,13 @@ handle_exec (Token *node)
     {
     case 0:
       /* execute the command in the child process */
-      execute (node->args);
+      execute (node->argv);
 
       break;
 
     case -1:
       /* handle fork failing */
-      perror (node->args[0]);
+      perror (node->argv[0]);
       node->return_status = RETURN_FAILURE;
 
       break;

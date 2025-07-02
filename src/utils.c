@@ -25,11 +25,11 @@ free_elements (Token *tokens)
     {
       if ((tokens)[i].type == COMMAND)
         {
-          for (size_t j = 0; (tokens)[i].args[j] != NULL; j++)
+          for (size_t j = 0; (tokens)[i].argv[j] != NULL; j++)
             {
-              free ((tokens)[i].args[j]);
+              free ((tokens)[i].argv[j]);
             }
-          free ((tokens)[i].args);
+          free ((tokens)[i].argv);
         }
     }
 
@@ -46,9 +46,9 @@ traverse_ast (Token *ast_root)
 
   if (ast_root->type == COMMAND)
     {
-      for (size_t j = 0; ast_root->args[j] != NULL; j++)
+      for (size_t j = 0; ast_root->argv[j] != NULL; j++)
         {
-          printf ("%s ", ast_root->args[j]);
+          printf ("%s ", ast_root->argv[j]);
         }
       printf ("\n");
     }

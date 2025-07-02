@@ -25,7 +25,7 @@ allocate_and_define_elem (int element_type)
   if (element_type != COMMAND)
     {
       /* `COMMAND` type will have an array of strings */
-      tokens[token_index].args = NULL;
+      tokens[token_index].argv = NULL;
     }
 }
 
@@ -116,7 +116,7 @@ handle_element (int element_type, char **string)
   if (element_type == COMMAND)
     {
       /* Only elements of type `COMMAND` need `tokens`. */
-      tokens[token_index].args = create_tokens (string);
+      tokens[token_index].argv = create_tokens (string);
     }
 
   token_index++;

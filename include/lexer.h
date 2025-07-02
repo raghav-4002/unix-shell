@@ -33,7 +33,7 @@ typedef struct Token
 {
   Token_type type;
 
-  char **args;                 /* relevent only for `element_type` `COMMAND` */
+  char **argv;                 /* relevent only for `element_type` `COMMAND` */
 
   struct Token *left;        /* left child in abstract syntax tree */
   struct Token *right;       /* right child in the same tree */

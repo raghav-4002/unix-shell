@@ -90,7 +90,7 @@ display_help (void)
 bool
 handle_builtin (Token *node)
 {
-  char **argv = node->args;
+  char **argv = node->argv;
   Return_status return_status;
 
   if (!strcmp (argv[0], "cd"))
