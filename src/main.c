@@ -9,7 +9,7 @@ int
 main(void)
 {
   char *raw_input = NULL;
-  Token *tokens   = NULL;
+  Token *tokens   = NULL;  /* an array of `Token` */
 
   while (1)
     {

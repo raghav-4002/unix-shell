@@ -68,7 +68,7 @@ display_prompt(void)
     }
 
   /* Display the prompt */
-  printf("\033[1;32m{%s@%s}\033[0m-[%s]\n", username, hostname, working_dir);
+  printf("\x1b[1;32m{%s@%s}\x1b[0m-[%s]\n", username, hostname, working_dir);
   printf("$ ");
 
   /* free memory allocated via `getcwd` */
