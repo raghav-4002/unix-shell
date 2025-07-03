@@ -35,7 +35,6 @@ read_input(void)
 #define FALLBACK_CWD      "<current working directory>"
 
 #define HOST_NAME_LEN     4096
-
 void
 display_prompt(void)
 {
