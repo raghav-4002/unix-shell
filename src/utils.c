@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "../include/utils.h"
 
 void
@@ -7,11 +9,11 @@ free_tokens (Token *tokens)
     {
       if ((tokens)[i].type == COMMAND)
         {
-          for (size_t j = 0; (tokens)[i].argv[j] != NULL; j++)
-            {
-              free ((tokens)[i].argv[j]);
-            }
-          free ((tokens)[i].argv);
+          // for (size_t j = 0; (tokens)[i].argv[j] != NULL; j++)
+          //   {
+          //     free ((tokens)[i].argv[j]);
+            // }
+          // free ((tokens)[i].argv);
         }
     }
 

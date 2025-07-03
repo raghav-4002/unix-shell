@@ -8,13 +8,16 @@ typedef enum Token_type
 {
   COMMAND,     /* like `ls -al` */
 
-  PIPE,        /* '|' */
-  BG_OPERATOR, /* '&' */
+  PIPE,        /* `|` */
+  BG_OPERATOR, /* `&` */
+
+  LEFT_PAREN,  /* `(` */
+  RIGHT_PAREN, /* `)` */
 
   LOGIC_OR,    /* `||` */
   LOGIC_AND,   /* `&&` */
   NEXT,        /* `;` */
-
+  
   NIL,         /* no type - used in the last token in `Token` array */
 
 } Token_type;
@@ -59,13 +62,13 @@ typedef struct Token
    * For `LOGIC_AND` and `LOGIC_OR` tokens, it will be the net
    * status of both of its children.
 
-   * For `NEXT` tokens, it will be `NOT_DEFINED`.
+   * For all other tokens, it will be `NOT_DEFINED`
    */
   Return_status return_status;
 
 } Token;
 
 /* Actual tokenizer function */
-Token *tokenize(char *raw_input);
+Token *tokenize(char *string);
 
 #endif

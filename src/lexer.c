@@ -1,175 +1,143 @@
+#include <stdio.h>  /* provides `perror` */
+#include <stdlib.h> /* provides `realloc`, `size_t` */
+#include <unistd.h> /* provides `NULL` */
+
 #include "../include/lexer.h"
 
-Token *tokens;
-size_t token_index;
-
-/*
- * Reallocates space in `elements` array to
-   include another element.
- *
- * Also sets the `element_type` of the element
-*/
+/* `free`s memory allocated to tokens in case of error */
 void
-allocate_and_define_elem (int element_type)
+clean_memory(Token **tokens, int token_index)
 {
-  /* `element_index` starts with 0, thus need to add `1` */
-  tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
-
-  tokens[token_index].type = element_type;
-  tokens[token_index].left = NULL;
-  tokens[token_index].right = NULL;
-
-  tokens[token_index].return_status
-      = NOT_DEFINED_YET; /* same for every element */
-
-  if (element_type != COMMAND)
+  for (size_t i = 0; i < token_index; i++)
     {
-      /* `COMMAND` type will have an array of strings */
-      tokens[token_index].argv = NULL;
-    }
-}
-
-size_t
-find_token_length (char *ptr)
-{
-  size_t token_length = 0;
-
-  while (*ptr != '\0' && *ptr != '&' && *ptr != '|' && *ptr != ';'
-         && *ptr != ' ')
-    {
-      token_length++;
-      ptr++;
-    }
-
-  return token_length;
-}
-
-/*
- * Takes the pointer to the current character in `string`.
- * Returns an array of strings (`tokens`).
- * Each string in the array is a command and its arguments.
- * Last item of array is `NULL`.
- */
-
-char **
-create_tokens (char **string)
-{
-  /*
-   * Reallocates `token_index` + 1 more memory to `tokens` as it finds
-     more tokens.
-
-   * Each memory block allocated is a pointer to string.
-     Thus also allocates memory to hold the characters of the string.
-
-   * Uses `memcpy` to copy the contents into the allocated block of string.
-
-   * Skips whitespaces and only stops adding tokens if finds recognised
-     character like `\0`, `|`, `&` or `;`
-   */
-
-  char **tokens = NULL;   /* Array of strings */
-  size_t token_index = 0; /* Index of a token in `tokens` array */
-
-  while (1)
-    {
-      tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
-
-      size_t token_length = find_token_length (*string);
-
-      tokens[token_index]
-          = malloc (token_length + 1); /* Added 1 for including null byte */
-
-      memcpy (tokens[token_index], *string, token_length);
-      tokens[token_index][token_length] = '\0';
-
-      token_index++;
-
-      /* move the pointer */
-      *string = *string + token_length;
-
-      if (**string == ' ')
+      if ((*tokens)[i].type == COMMAND)
         {
-          /* skip spaces */
-          while (**string == ' ')
-            {
-              (*string)++;
-            }
+          // logic to free args of command
         }
-
-      if (**string == '\0' || **string == '&' || **string == '|'
-          || **string == ';')
-        break;
     }
-
-  /* add `NULL` as the last token to signify no more tokens are present */
-  tokens = realloc (tokens, sizeof (*tokens) * (token_index + 1));
-  tokens[token_index] = NULL;
-
-  return tokens;
+  free(tokens);
 }
 
-void
-handle_element (int element_type, char **string)
+int
+add_token(Token_type token_type, Token **tokens, int *token_index)
 {
-  allocate_and_define_elem (element_type);
+  *token_index = *token_index + 1;
 
-  if (element_type == COMMAND)
+  /*
+   * Reallocate memory to add a token.
+   * Is `*token_index + 1` because `token_index`
+   * starts from `0`.
+   */
+  *tokens = realloc(*tokens, (*token_index + 1) * sizeof (**tokens));
+
+  /* if `realloc` fails */
+  if (*tokens == NULL)
     {
-      /* Only elements of type `COMMAND` need `tokens`. */
-      tokens[token_index].argv = create_tokens (string);
+      perror("realloc failed in `add_token`");
+      return -1;
     }
 
-  token_index++;
+  (*tokens)[*token_index].type          = token_type;
+
+  /* Set default fields */
+  (*tokens)[*token_index].argv          = NULL;
+  (*tokens)[*token_index].argc          = 0;
+  (*tokens)[*token_index].left          = NULL;
+  (*tokens)[*token_index].right         = NULL;
+  (*tokens)[*token_index].return_status = NOT_DEFINED;
+
+  /* function succeeds */
+  return 0;
 }
 
-/* Tokenizes a string and returns an array of `Element` */
 Token *
-tokenize (char *raw_input)
+tokenize(char *string)
 {
-  /* Set global variables */
-  tokens = NULL;
-  token_index = 0;
+  Token *tokens = NULL;    /* array of tokens */
+  int token_index = -1; /* index of the latest token to be added */
 
-  char *string = raw_input;
+  int return_val;
 
-  /* Traverse through the string */
   while (*string != '\0')
     {
       switch (*string)
         {
+
+        /* For `LOGIC_OR` and `PIPE` */
         case '|':
           if (string[1] == '|')
             {
-              handle_element (LOGIC_OR, &string);
+              return_val = add_token(LOGIC_OR, &tokens, &token_index);
               string = string + 2;
-              break;
             }
 
+          else
+            {
+              return_val = add_token(PIPE, &tokens, &token_index);
+              string++;
+            }
+
+          break;
+
+        /* For `LOGIC_AND` and `BG_OPERATOR` */
         case '&':
           if (string[1] == '&')
             {
-              handle_element (LOGIC_AND, &string);
+              return_val = add_token(LOGIC_AND, &tokens, &token_index);
               string = string + 2;
-              break;
             }
 
+          else
+            {
+              return_val = add_token(BG_OPERATOR, &tokens, &token_index);
+              string++;
+            }
+
+          break;
+
+        /* For `LEFT_PAREN` */
+        case '(':
+          return_val = add_token(LEFT_PAREN, &tokens, &token_index);
+          string++;
+
+          break;
+
+        /* For `RIGHT_PAREN` */
+        case ')':
+          return_val = add_token(RIGHT_PAREN, &tokens, &token_index);
+          string++;
+
+          break;
+
+        /* For `NEXT` */
         case ';':
-          handle_element (NEXT, &string);
+          return_val = add_token(NEXT, &tokens, &token_index);
           string++;
+
           break;
 
-        case ' ':
-          string++;
-          break;
-
+        /* For `COMMANDS` */
         default:
-          handle_element (COMMAND, &string);
+          
+
           break;
+        }
+
+      if (return_val == -1)
+        {
+          clean_memory(&tokens, token_index);
+          return NULL;
         }
     }
 
-  /* add a dummy element at the end to signify no more elements */
-  allocate_and_define_elem (NIL);
+  /* Add `NIL` as the last token, to signify that no more tokens are present */
+  return_val = add_token(NIL, &tokens, &token_index);
+
+  if (return_val == -1)
+    {
+      clean_memory(&tokens, token_index);
+      return NULL;
+    }
 
   return tokens;
 }

@@ -27,7 +27,7 @@ main(void)
 
       if (tokens)
         {
-          parse_and_evaluate(tokens);
+          // parse_and_evaluate(tokens);
           free_tokens(tokens);
         }
 
