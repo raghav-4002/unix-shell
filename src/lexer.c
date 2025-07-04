@@ -6,7 +6,7 @@
 
 /* `free`s memory allocated to tokens in case of error */
 void
-clean_memory(Token **tokens, int token_index)
+clean_memory (Token **tokens, int token_index)
 {
   for (size_t i = 0; i < token_index; i++)
     {
@@ -15,11 +15,27 @@ clean_memory(Token **tokens, int token_index)
           // logic to free args of command
         }
     }
-  free(tokens);
+  free (tokens);
+}
+
+Token
+init_token (Token_type token_type)
+{
+  Token token;
+
+  token.type = token_type;
+  token.argv = NULL;
+  token.argc = 0;
+  token.left = NULL;
+  token.right = NULL;
+  token.return_status = NOT_DEFINED;
+
+  return token;
 }
 
 int
-add_token(Token_type token_type, Token **tokens, int *token_index)
+create_and_add_token (Token **tokens, size_t *token_index,
+                      Token_type token_type)
 {
   *token_index = *token_index + 1;
 
@@ -28,115 +44,141 @@ add_token(Token_type token_type, Token **tokens, int *token_index)
    * Is `*token_index + 1` because `token_index`
    * starts from `0`.
    */
-  *tokens = realloc(*tokens, (*token_index + 1) * sizeof (**tokens));
+  *tokens = realloc (*tokens, (*token_index + 1) * sizeof (**tokens));
 
   /* if `realloc` fails */
   if (*tokens == NULL)
     {
-      perror("realloc failed in `add_token`");
+      perror ("realloc failed in `add_token`");
       return -1;
     }
 
-  (*tokens)[*token_index].type          = token_type;
-
-  /* Set default fields */
-  (*tokens)[*token_index].argv          = NULL;
-  (*tokens)[*token_index].argc          = 0;
-  (*tokens)[*token_index].left          = NULL;
-  (*tokens)[*token_index].right         = NULL;
-  (*tokens)[*token_index].return_status = NOT_DEFINED;
+  (*tokens)[*token_index] = init_token (token_type);
 
   /* function succeeds */
   return 0;
 }
 
-Token *
-tokenize(char *string)
+void
+handle_command(char *string, size_t *advance, Token **tokens, size_t *token_index)
 {
-  Token *tokens = NULL;    /* array of tokens */
-  int token_index = -1; /* index of the latest token to be added */
+  *advance = 0;   
 
-  int return_val;
+  while (string[*advance] != '&'
+      && string[*advance] != '|'
+      && string[*advance] != ';'
+      && string[*advance] != '\0')
+  {
+    *advance += 1;
+
+
+  }
+}
+
+void
+find_token_type (char *string, size_t *advance, Token_type *token_type)
+{
+  switch (*string)
+    {
+    /* For `LOGIC_OR` and `PIPE` */
+    case '|':
+      if (string[1] == '|')
+        {
+          *token_type = LOGIC_OR;
+          *advance = 2;
+        }
+
+      else
+        {
+          *token_type = PIPE;
+          *advance = 1;
+        }
+
+      break;
+
+    /* For `LOGIC_AND` and `BG_OPERATOR` */
+    case '&':
+      if (string[1] == '&')
+        {
+          *token_type = LOGIC_AND;
+          *advance = 2;
+        }
+
+      else
+        {
+          *token_type = BG_OPERATOR;
+          *advance = 1;
+        }
+
+      break;
+
+    /* For `LEFT_PAREN` */
+    case '(':
+      *token_type = LEFT_PAREN;
+      *advance = 1;
+
+      break;
+
+    /* For `RIGHT_PAREN` */
+    case ')':
+      *token_type = RIGHT_PAREN;
+      *advance = 1;
+
+      break;
+
+    /* For `NEXT` */
+    case ';':
+      *token_type = NEXT;
+      *advance = 1;
+
+      break;
+
+    case '\0':
+      *token_type = NIL;
+      *advance = 0;
+
+    /* For `COMMANDS` */
+    default:
+      *token_type = COMMAND;
+      *advance = 0;
+
+      break;
+    }
+}
+
+Token *
+tokenize (char *string)
+{
+  Token *tokens = NULL;
+  size_t token_index = 0;
 
   while (*string != '\0')
     {
-      switch (*string)
-        {
+      size_t advance = 0; /* move the pointer by this */
+      Token_type token_type;
 
-        /* For `LOGIC_OR` and `PIPE` */
-        case '|':
-          if (string[1] == '|')
-            {
-              return_val = add_token(LOGIC_OR, &tokens, &token_index);
-              string = string + 2;
-            }
+      find_token_type (string, &advance, &token_type);
 
-          else
-            {
-              return_val = add_token(PIPE, &tokens, &token_index);
-              string++;
-            }
+      int return_val
+          = create_and_add_token (&tokens, &token_index, token_type);
 
-          break;
-
-        /* For `LOGIC_AND` and `BG_OPERATOR` */
-        case '&':
-          if (string[1] == '&')
-            {
-              return_val = add_token(LOGIC_AND, &tokens, &token_index);
-              string = string + 2;
-            }
-
-          else
-            {
-              return_val = add_token(BG_OPERATOR, &tokens, &token_index);
-              string++;
-            }
-
-          break;
-
-        /* For `LEFT_PAREN` */
-        case '(':
-          return_val = add_token(LEFT_PAREN, &tokens, &token_index);
-          string++;
-
-          break;
-
-        /* For `RIGHT_PAREN` */
-        case ')':
-          return_val = add_token(RIGHT_PAREN, &tokens, &token_index);
-          string++;
-
-          break;
-
-        /* For `NEXT` */
-        case ';':
-          return_val = add_token(NEXT, &tokens, &token_index);
-          string++;
-
-          break;
-
-        /* For `COMMANDS` */
-        default:
-          
-
-          break;
-        }
-
+      /* in case of error, delete already created tokens */
       if (return_val == -1)
         {
-          clean_memory(&tokens, token_index);
+          clean_memory (&tokens, token_index);
           return NULL;
         }
-    }
 
-  /* Add `NIL` as the last token, to signify that no more tokens are present */
-  return_val = add_token(NIL, &tokens, &token_index);
+      /* last token */
+      if (token_type == NIL)
+        break;
 
-  if (return_val == -1)
-    {
-      clean_memory(&tokens, token_index);
-      return NULL;
+      if (token_type == COMMAND)
+        {
+          
+        }
+
+      string += advance;
     }
 
   return tokens;
