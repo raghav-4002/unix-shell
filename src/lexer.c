@@ -72,7 +72,7 @@ allocate_mem_for_arg_array(Token *token)
   argv = realloc(argv, argc * sizeof(*argv));
   if(argv == NULL)
   {
-    perror("reallocate_memory_for_arg");
+    perror("allocate_mem_for_arg_array");
     return -1;
   }
 
@@ -90,6 +90,11 @@ allocate_mem_for_string(size_t upper_lim, Token *token)
 
   /* `upper_lim + 1`: `1` extra byte for null-character */
   argv[argc - 1] = realloc(argv[argc - 1], upper_lim + 1);
+  if(argv[argc - 1] == NULL)
+  {
+    perror("allocate_mem_for_string");
+    return -1;
+  }
 
   return 0;
 }
@@ -97,17 +102,23 @@ allocate_mem_for_string(size_t upper_lim, Token *token)
 int
 add_arg(char *string, size_t upper_lim, Token *token)
 {
-  allocate_mem_for_string(upper_lim, token);
+  int return_val = allocate_mem_for_string(upper_lim, token);
+  if(return_val == -1)
+  {
+    return -1;
+  }
 
   char **argv = token->argv;
   size_t argc = token->argc;
 
   /* Copy the contents from `string` to argv array */ 
   strncpy(argv[argc - 1], string, upper_lim);
+
+  return 0;
 }
 
 int
-handle_command(char *string, size_t *advance, Token *token)
+tokenize_command(char *string, size_t *advance, Token *token)
 {
   *advance = 0;  /* will hold the length of a single argument */
 
@@ -132,14 +143,35 @@ handle_command(char *string, size_t *advance, Token *token)
           {
             return -1;
           }
-
+          
+          return_val = add_arg(string, *advance, token);
+          if(return_val == -1)
+          {
+            return -1;
+          }
+      
           while (string[*advance] != ' ')
             (*advance)++;
+
+          string += *advance;
+          *advance = 0;
         }
     }
 
-  // logic for creating last arg
-  //
+  int return_val;
+
+  return_val = allocate_mem_for_arg_array(token);
+  if(return_val == -1)
+  {
+   return -1;
+  }
+
+  return_val = add_arg(string, *advance, token);
+  if(return_val == -1)
+  {
+    return -1;
+  }
+
   return 0;
 }
 
@@ -243,7 +275,12 @@ tokenize (char *string)
 
       if (token_type == COMMAND)
         {
-          // handle_command
+          return_val = tokenize_command(string, &advance, &tokens[token_index]);
+          if(return_val == -1)
+          {
+            clean_memory(&tokens, token_index);
+            return NULL;
+          }
         }
 
       string += advance;
