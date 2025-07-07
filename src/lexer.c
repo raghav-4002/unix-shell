@@ -1,15 +1,14 @@
-#include <stdio.h>  /* provides `perror` */
-#include <stdlib.h> /* provides `realloc`, `size_t` */
-#include <unistd.h> /* provides `NULL` */
+#include <stdio.h>  /* provides `perror`, `ssize_t` */
+#include <stdlib.h> /* provides `realloc`, `free` */
 #include <string.h> /* provides `strncpy` */
 
 #include "../include/lexer.h"
 
 /* `free`s memory allocated to tokens in case of error */
 void
-clean_memory (Token **tokens, int token_index)
+clean_memory (Token **tokens, ssize_t token_index)
 {
-  for (size_t i = 0; i < token_index; i++)
+  for (ssize_t i = 0; i < token_index; i++)
     {
       if ((*tokens)[i].type == COMMAND)
         {
@@ -35,7 +34,7 @@ init_token (Token_type token_type)
 }
 
 int
-create_and_add_token (Token **tokens, size_t *token_index,
+create_and_add_token (Token **tokens, ssize_t *token_index,
                       Token_type token_type)
 {
   *token_index = *token_index + 1;
@@ -237,6 +236,8 @@ find_token_type (char *string, size_t *advance, Token_type *token_type)
       *token_type = NIL;
       *advance = 0;
 
+      break;
+
     /* For `COMMANDS` */
     default:
       *token_type = COMMAND;
@@ -250,10 +251,17 @@ Token *
 tokenize (char *string)
 {
   Token *tokens = NULL;
-  size_t token_index = 0;
+  ssize_t token_index = -1;
 
-  while (*string != '\0')
+  while (1)
     {
+      /* Skip space */
+      if(*string == ' ')
+        {
+          string++;
+          continue;
+        }
+
       size_t advance = 0; /* move the pointer by this */
       Token_type token_type;
 
@@ -276,6 +284,7 @@ tokenize (char *string)
       if (token_type == COMMAND)
         {
           return_val = tokenize_command(string, &advance, &tokens[token_index]);
+
           if(return_val == -1)
           {
             clean_memory(&tokens, token_index);
@@ -283,6 +292,7 @@ tokenize (char *string)
           }
         }
 
+      /* Move the string pointer */
       string += advance;
     }
 

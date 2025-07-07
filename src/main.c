@@ -28,7 +28,7 @@ main(void)
       if (tokens)
         {
           // parse_and_evaluate(tokens);
-          free_tokens(tokens);
+          free_tokens(&tokens);
         }
 
       free(raw_input); /* free memory allocated via getline */

@@ -3,11 +3,11 @@
 #include "../include/utils.h"
 
 void
-free_tokens (Token *tokens)
+free_tokens (Token **tokens)
 {
-  for (size_t i = 0; (tokens)[i].type != NIL; i++)
+  for (size_t i = 0; (*tokens)[i].type != NIL; i++)
     {
-      if ((tokens)[i].type == COMMAND)
+      if ((*tokens)[i].type == COMMAND)
         {
           // for (size_t j = 0; (tokens)[i].argv[j] != NULL; j++)
           //   {
@@ -17,7 +17,7 @@ free_tokens (Token *tokens)
         }
     }
 
-  free (tokens);
+  free (*tokens);
 }
 
 void

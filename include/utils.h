@@ -4,7 +4,7 @@
 #include "../include/lexer.h"
 #include <stdlib.h>
 
-void free_tokens (Token *tokens);
+void free_tokens (Token **tokens);
 void traverse_ast (Token *ast_root);
 
 #endif
