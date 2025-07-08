@@ -21,6 +21,54 @@ free_tokens (Token **tokens)
 }
 
 void
+print_tokens(Token *tokens)
+{
+  for (ssize_t i = 0; tokens[i].type != NIL; i++)
+  {
+    switch(tokens[i].type)
+    {
+      case LOGIC_AND:
+        printf("&&\n");
+        break;
+
+      case LOGIC_OR:
+        printf("||\n");
+        break;
+
+      case PIPE:
+        printf("|\n");
+        break;
+
+      case BG_OPERATOR:
+        printf("&\n");
+        break;
+
+      case LEFT_PAREN:
+        printf("(\n");
+        break;      
+
+      case RIGHT_PAREN:
+        printf(")\n");
+        break;
+
+      case NEXT:
+        printf(";\n");
+        break;
+
+      case COMMAND:
+        for(size_t j = 1; j < tokens[i].argc; j++)
+        {
+          printf("%s ", tokens[i].argv[j]);
+        }
+
+        printf("\n");
+
+        break;
+    }
+  }
+}
+
+void
 traverse_ast (Token *ast_root)
 {
   if (ast_root == NULL)

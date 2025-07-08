@@ -75,6 +75,8 @@ allocate_mem_for_arg_array(Token *token)
     return -1;
   }
 
+  argv[argc - 1] = NULL;
+
   token->argv = argv;
   token->argc = argc;
 
@@ -84,11 +86,11 @@ allocate_mem_for_arg_array(Token *token)
 int
 allocate_mem_for_string(size_t upper_lim, Token *token)
 {
-  char **argv = token->argv;  /* `argv` can never be `NULL` */
+  char **argv = token->argv;
   size_t argc = token->argc;
 
   /* `upper_lim + 1`: `1` extra byte for null-character */
-  argv[argc - 1] = realloc(argv[argc - 1], upper_lim + 1);
+  argv[argc - 1] = malloc(upper_lim + 1);
   if(argv[argc - 1] == NULL)
   {
     perror("allocate_mem_for_string");
@@ -164,12 +166,8 @@ tokenize_command(char *string, size_t *advance, Token *token)
   {
    return -1;
   }
-
-  return_val = add_arg(string, *advance, token);
-  if(return_val == -1)
-  {
-    return -1;
-  }
+  
+  token->argv[token->argc - 1] =NULL;
 
   return 0;
 }
@@ -265,6 +263,7 @@ tokenize (char *string)
       size_t advance = 0; /* move the pointer by this */
       Token_type token_type;
 
+      /* If `*string` is '\0', `token_type` will become `NIL` */
       find_token_type (string, &advance, &token_type);
 
       int return_val

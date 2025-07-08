@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 void free_tokens (Token **tokens);
+void print_tokens(Token *tokens);
 void traverse_ast (Token *ast_root);
 
 #endif
