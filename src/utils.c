@@ -56,7 +56,7 @@ print_tokens(Token *tokens)
         break;
 
       case COMMAND:
-        for(size_t j = 1; j < tokens[i].argc; j++)
+        for(size_t j = 0; tokens->argv[j] != NULL; j++)
         {
           printf("%s ", tokens[i].argv[j]);
         }

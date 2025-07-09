@@ -1,5 +1,6 @@
-#include <stdio.h>  /* provides `perror`, `ssize_t` */
-#include <stdlib.h> /* provides `realloc`, `free` */
+#include <stddef.h>
+#include <stdio.h>  /* provides `perror`, `ssize_t`, `size_t` */
+#include <stdlib.h> /* provides `realloc`, `free`, `malloc` */
 #include <string.h> /* provides `strncpy` */
 
 #include "../include/lexer.h"
@@ -34,33 +35,27 @@ init_token (Token_type token_type)
 }
 
 int
-create_and_add_token (Token **tokens, ssize_t *token_index,
-                      Token_type token_type)
+add_token (Token **tokens, ssize_t *token_index, Token_type token_type)
 {
+  /* `*token_index` starts from `-1` */
   *token_index = *token_index + 1;
+  *tokens      = realloc(*tokens, (*token_index + 1) * sizeof(**tokens));
 
-  /*
-   * Reallocate memory to add a token.
-   * Is `*token_index + 1` because `token_index`
-   * starts from `0`.
-   */
-  *tokens = realloc (*tokens, (*token_index + 1) * sizeof (**tokens));
-
-  /* if `realloc` fails */
+  /* `realloc` fails */
   if (*tokens == NULL)
     {
       perror ("realloc failed in `add_token`");
       return -1;
     }
 
+  /* Initialize the token with default values */
   (*tokens)[*token_index] = init_token (token_type);
 
-  /* function succeeds */
   return 0;
 }
 
 int
-allocate_mem_for_arg_array(Token *token)
+reallocate_arg_array (Token *token)
 {
   char **argv = token->argv;
   size_t argc = token->argc;
@@ -68,12 +63,13 @@ allocate_mem_for_arg_array(Token *token)
   /* `argc` starts from `0` */
   argc++;
 
-  argv = realloc(argv, argc * sizeof(*argv));
-  if(argv == NULL)
-  {
-    perror("allocate_mem_for_arg_array");
-    return -1;
-  }
+  argv = realloc (argv, argc * sizeof (*argv));
+
+  if (argv == NULL)
+    {
+      perror ("reallocate_arg_array");
+      return -1;
+    }
 
   argv[argc - 1] = NULL;
 
@@ -84,90 +80,73 @@ allocate_mem_for_arg_array(Token *token)
 }
 
 int
-allocate_mem_for_string(size_t upper_lim, Token *token)
+allocate_mem_for_string (size_t upper_lim, Token *token)
 {
   char **argv = token->argv;
   size_t argc = token->argc;
 
   /* `upper_lim + 1`: `1` extra byte for null-character */
-  argv[argc - 1] = malloc(upper_lim + 1);
-  if(argv[argc - 1] == NULL)
-  {
-    perror("allocate_mem_for_string");
-    return -1;
-  }
+  argv[argc - 1] = malloc (upper_lim + 1);
+
+  if (argv[argc - 1] == NULL)
+    {
+      perror ("allocate_mem_for_string");
+      return -1;
+    }
 
   return 0;
 }
 
 int
-add_arg(char *string, size_t upper_lim, Token *token)
+add_arg (char *string, size_t upper_lim, Token *token)
 {
-  int return_val = allocate_mem_for_string(upper_lim, token);
-  if(return_val == -1)
-  {
-    return -1;
-  }
+  int return_val = allocate_mem_for_string (upper_lim, token);
+
+  if (return_val == -1)
+    {
+      return -1;
+    }
 
   char **argv = token->argv;
   size_t argc = token->argc;
 
-  /* Copy the contents from `string` to argv array */ 
-  strncpy(argv[argc - 1], string, upper_lim);
+  /* Copy the contents from `string` to argv array, including '\0' */
+  snprintf(argv[argc - 1], upper_lim + 1, "%s", string);
 
   return 0;
 }
 
 int
-tokenize_command(char *string, size_t *advance, Token *token)
+tokenize_command (char *string, size_t *advance, Token *token)
 {
-  *advance = 0;  /* will hold the length of a single argument */
+  *advance       = 0; /* holds the length of a single argument */
+  int return_val = NOT_DEFINED;
 
-  while (string[*advance] != '&' && string[*advance] != '|'
-         && string[*advance] != ';' && string[*advance] != '\0')
+  while (1)
     {
-      *advance += 1;
-
-      /*
-       * If space is encountered, meaning that an argument from
-       * position of pointer `string` to `string + advance` is
-       * found.
-       * Thus, allocate memory in argv array member of struct `tokens`
-       * and add that argument into the array.
-       */
-      if (string[*advance] == ' ')
+      if (string[*advance] == ' ' || string[*advance] == '&'
+          || string[*advance] == '|' || string[*advance] == ';'
+          || string[*advance] == '\0')
         {
-          int return_val;
+          reallocate_arg_array(token);          
+          add_arg(string, *advance, token);
 
-          return_val = allocate_mem_for_arg_array(token);
-          if(return_val == -1)
-          {
-            return -1;
-          }
-          
-          return_val = add_arg(string, *advance, token);
-          if(return_val == -1)
-          {
-            return -1;
-          }
-      
-          while (string[*advance] != ' ')
-            (*advance)++;
+          if(string[*advance] != ' ')
+            break;
 
           string += *advance;
           *advance = 0;
         }
+
+      else 
+        (*advance)++;
     }
 
-  int return_val;
+  reallocate_arg_array(token);
+  char **argv = token->argv;
+  size_t argc = token->argc;
 
-  return_val = allocate_mem_for_arg_array(token);
-  if(return_val == -1)
-  {
-   return -1;
-  }
-  
-  token->argv[token->argc - 1] =NULL;
+  argv[argc - 1] = NULL;
 
   return 0;
 }
@@ -177,7 +156,7 @@ find_token_type (char *string, size_t *advance, Token_type *token_type)
 {
   switch (*string)
     {
-    /* For `LOGIC_OR` and `PIPE` */
+    /* `LOGIC_OR` and `PIPE` */
     case '|':
       if (string[1] == '|')
         {
@@ -193,7 +172,7 @@ find_token_type (char *string, size_t *advance, Token_type *token_type)
 
       break;
 
-    /* For `LOGIC_AND` and `BG_OPERATOR` */
+    /* `LOGIC_AND` and `BG_OPERATOR` */
     case '&':
       if (string[1] == '&')
         {
@@ -209,34 +188,35 @@ find_token_type (char *string, size_t *advance, Token_type *token_type)
 
       break;
 
-    /* For `LEFT_PAREN` */
+    /* `LEFT_PAREN` */
     case '(':
       *token_type = LEFT_PAREN;
       *advance = 1;
 
       break;
 
-    /* For `RIGHT_PAREN` */
+    /* `RIGHT_PAREN` */
     case ')':
       *token_type = RIGHT_PAREN;
       *advance = 1;
 
       break;
 
-    /* For `NEXT` */
+    /* `NEXT` */
     case ';':
       *token_type = NEXT;
       *advance = 1;
 
       break;
 
+    /* No more characters in string are left */
     case '\0':
       *token_type = NIL;
       *advance = 0;
 
       break;
 
-    /* For `COMMANDS` */
+    /* `COMMANDS` */
     default:
       *token_type = COMMAND;
       *advance = 0;
@@ -251,25 +231,35 @@ tokenize (char *string)
   Token *tokens = NULL;
   ssize_t token_index = -1;
 
+  /* Analyse the string, character by character */
   while (1)
     {
       /* Skip space */
-      if(*string == ' ')
+      if (*string == ' ')
         {
           string++;
           continue;
         }
 
-      size_t advance = 0; /* move the pointer by this */
-      Token_type token_type;
+      size_t advance = 0; /* move the string pointer by this */
+      Token_type token_type = NIL;
 
       /* If `*string` is '\0', `token_type` will become `NIL` */
       find_token_type (string, &advance, &token_type);
 
-      int return_val
-          = create_and_add_token (&tokens, &token_index, token_type);
+      /* Add a new token in `tokens` array */
+      int return_val = add_token (&tokens, &token_index, token_type);
 
       /* in case of error, delete already created tokens */
+      if (return_val == -1)
+        {
+          clean_memory (&tokens, token_index);
+          return NULL;
+        }
+
+      if (token_type == COMMAND)
+        return_val = tokenize_command (string, &advance, &tokens[token_index]);
+
       if (return_val == -1)
         {
           clean_memory (&tokens, token_index);
@@ -279,17 +269,6 @@ tokenize (char *string)
       /* last token */
       if (token_type == NIL)
         break;
-
-      if (token_type == COMMAND)
-        {
-          return_val = tokenize_command(string, &advance, &tokens[token_index]);
-
-          if(return_val == -1)
-          {
-            clean_memory(&tokens, token_index);
-            return NULL;
-          }
-        }
 
       /* Move the string pointer */
       string += advance;
