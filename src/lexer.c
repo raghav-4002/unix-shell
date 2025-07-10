@@ -1,4 +1,3 @@
-#include <stddef.h>
 #include <stdio.h>  /* provides `perror`, `ssize_t`, `size_t` */
 #include <stdlib.h> /* provides `realloc`, `free`, `malloc` */
 #include <string.h> /* provides `strncpy` */
@@ -13,7 +12,10 @@ clean_memory (Token **tokens, ssize_t token_index)
     {
       if ((*tokens)[i].type == COMMAND)
         {
-          // logic to free args of command
+          for (size_t i = 1; i <= (*tokens)->argc; i++)
+            {
+              free ((*tokens)->argv[i - 1]);
+            }
         }
     }
   free (tokens);
@@ -39,7 +41,7 @@ add_token (Token **tokens, ssize_t *token_index, Token_type token_type)
 {
   /* `*token_index` starts from `-1` */
   *token_index = *token_index + 1;
-  *tokens      = realloc(*tokens, (*token_index + 1) * sizeof(**tokens));
+  *tokens = realloc (*tokens, (*token_index + 1) * sizeof (**tokens));
 
   /* `realloc` fails */
   if (*tokens == NULL)
@@ -111,7 +113,7 @@ add_arg (char *string, size_t upper_lim, Token *token)
   size_t argc = token->argc;
 
   /* Copy the contents from `string` to argv array, including '\0' */
-  snprintf(argv[argc - 1], upper_lim + 1, "%s", string);
+  snprintf (argv[argc - 1], upper_lim + 1, "%s", string);
 
   return 0;
 }
@@ -119,7 +121,7 @@ add_arg (char *string, size_t upper_lim, Token *token)
 int
 tokenize_command (char *string, size_t *advance, Token *token)
 {
-  *advance       = 0; /* holds the length of a single argument */
+  *advance = 0; /* holds the length of a single argument */
   int return_val = NOT_DEFINED;
 
   while (1)
@@ -128,21 +130,21 @@ tokenize_command (char *string, size_t *advance, Token *token)
           || string[*advance] == '|' || string[*advance] == ';'
           || string[*advance] == '\0')
         {
-          reallocate_arg_array(token);          
-          add_arg(string, *advance, token);
+          reallocate_arg_array (token);
+          add_arg (string, *advance, token);
 
-          if(string[*advance] != ' ')
+          if (string[*advance] != ' ')
             break;
 
           string += *advance;
           *advance = 0;
         }
 
-      else 
+      else
         (*advance)++;
     }
 
-  reallocate_arg_array(token);
+  reallocate_arg_array (token);
   char **argv = token->argv;
   size_t argc = token->argc;
 
