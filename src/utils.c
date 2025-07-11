@@ -9,63 +9,14 @@ free_tokens (Token **tokens)
     {
       if ((*tokens)[i].type == COMMAND)
         {
-          // for (size_t j = 0; (tokens)[i].argv[j] != NULL; j++)
-          //   {
-          //     free ((tokens)[i].argv[j]);
-            // }
-          // free ((tokens)[i].argv);
+          for (size_t j = 1; j != (*tokens)[i].argc; j++)
+            free ((*tokens)[i].argv[j - 1]);
+
+          free ((*tokens)[i].argv);
         }
     }
 
   free (*tokens);
-}
-
-void
-print_tokens(Token *tokens)
-{
-  for (ssize_t i = 0; tokens[i].type != NIL; i++)
-  {
-    switch(tokens[i].type)
-    {
-      case LOGIC_AND:
-        printf("&&\n");
-        break;
-
-      case LOGIC_OR:
-        printf("||\n");
-        break;
-
-      case PIPE:
-        printf("|\n");
-        break;
-
-      case BG_OPERATOR:
-        printf("&\n");
-        break;
-
-      case LEFT_PAREN:
-        printf("(\n");
-        break;      
-
-      case RIGHT_PAREN:
-        printf(")\n");
-        break;
-
-      case NEXT:
-        printf(";\n");
-        break;
-
-      case COMMAND:
-        for(size_t j = 0; tokens->argv[j] != NULL; j++)
-        {
-          printf("%s ", tokens[i].argv[j]);
-        }
-
-        printf("\n");
-
-        break;
-    }
-  }
 }
 
 void

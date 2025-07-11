@@ -1,9 +1,7 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "../include/io_handling.h"
 #include "../include/lexer.h"
-#include "../include/parser.h"
 #include "../include/utils.h"
 
 int
@@ -28,7 +26,7 @@ main(void)
 
       if (tokens)
         {
-          print_tokens(tokens);
+          // parsing and evaluation
           free_tokens(&tokens);
         }
 
