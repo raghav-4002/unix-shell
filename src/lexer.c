@@ -139,27 +139,24 @@ tokenize_command(char *string, size_t *advance, Token *token)
   *advance       = 0; /* holds the length of a single argument */
   int return_val = NOT_DEFINED;
 
-  while (1)
-    {
-      if (string[*advance] == ' ' || string[*advance] == '&'
-          || string[*advance] == '|' || string[*advance] == ';'
-          || string[*advance] == '\0')
-        {
-          reallocate_arg_array(token);
-          add_arg(string, *advance, token);
+  while(string[*advance] != '&' && string[*advance] != '|'
+        && string[*advance] != ';' && string[*advance] != '\0')
+  {
+    if(string[*advance] == ' ')
+      {
+        reallocate_arg_array(token);
+        add_arg(string, *advance, token);
+        
+        *advance += 1;
+        string += *advance;
+        *advance = 0;
 
-          if (string[*advance] != ' ')
-            break;
+        continue;
+      }
 
-          string += *advance;
-          *advance = 0;
-        }
+    *advance += 1;
+  }
 
-      else
-        (*advance)++;
-    }
-
-  /* Add `NULL` as the last argument */
   reallocate_arg_array(token);
 
   return 0;
