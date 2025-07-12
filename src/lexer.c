@@ -136,25 +136,33 @@ add_arg(char *string, size_t upper_lim, Token *token)
 int
 tokenize_command(char *string, size_t *advance, Token *token)
 {
-  *advance       = 0; /* holds the length of a single argument */
-  int return_val = NOT_DEFINED;
+  size_t arg_len = 0;
+  *advance = 1;
 
-  while(string[*advance] != '&' && string[*advance] != '|'
-        && string[*advance] != ';' && string[*advance] != '\0')
+  while (1)
   {
-    if(string[*advance] == ' ')
+    if(string[arg_len] == ' ' || string[arg_len] == '&'
+      || string[arg_len] == '|' || string[arg_len] == ';'
+      || string[arg_len] == '(' || string[arg_len] == ')'
+      || string[arg_len] == '\0')
+    {
+      reallocate_arg_array(token);
+      add_arg(string, arg_len, token);
+
+      *advance += arg_len;
+      
+      if (string[arg_len] != ' ')
       {
-        reallocate_arg_array(token);
-        add_arg(string, *advance, token);
-        
-        *advance += 1;
         string += *advance;
-        *advance = 0;
-
-        continue;
+        break;
       }
+      
+      string += *advance;
+      arg_len = 0;
+      continue;
+    }
 
-    *advance += 1;
+    arg_len += 1;
   }
 
   reallocate_arg_array(token);
