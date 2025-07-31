@@ -1,9 +1,1 @@
-*/*.out
-*/test*
-notes.md
-*.out
-test*
-example*
-shell
 
-.gitignore
