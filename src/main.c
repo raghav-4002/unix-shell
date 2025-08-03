@@ -2,7 +2,7 @@
 
 
 int
-main()
+main(int argc, char *argv[])
 {
-    return start_shell();
+    return init_shell(argc, argv);
 }
