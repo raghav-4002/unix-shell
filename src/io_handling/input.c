@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../../include/io_handling/input.h"
+#include "input.h"
 
 
 void

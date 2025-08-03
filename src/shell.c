@@ -1,12 +1,17 @@
-#include "../include/io_handling/input.h"
+#include <stdlib.h>
+
+#include "io_handling/input.h"
 
 
 int
-start_shell(int argc, char *argv[])
+start_shell()
 {
-    char *line = read_from_stdin();       
-    Token *tokens = tokenize(line);
-    parse_and_evaluate(tokens);
+    /* Main shell loop */
+    while (1) {
+        char *line = read_from_stdin();
+        Token *tokens = tokenize();
+        parse_and_execute(tokens);
+    }
 
-    return 0;
+    return EXIT_SUCCESS;
 }

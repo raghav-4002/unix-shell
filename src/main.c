@@ -1,8 +1,8 @@
-#include "../include/shell.h"
+#include "shell.h"
 
 
 int
-main(int argc, char *argv[])
+main()
 {
-    return start_shell(argc, argv);
+    return start_shell();
 }
