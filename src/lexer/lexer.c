@@ -5,26 +5,49 @@
 #include "token.h"
 
 
-Token *tokens = NULL;
-size_t cur_index = 0;
+struct Parameters
+{
+    Token *tokens;
+    size_t cur_index;
 
-char *source = NULL;
-size_t start = 0;
-size_t current = 0;
+    char *source;
+    size_t start;
+    size_t current;
+};
+
+
+void
+init_parameters(struct Parameters *parameters, char *input)
+{
+    parameters->tokens    = NULL;
+    parameters->cur_index = 0;
+
+    parameters->source    = input;
+    parameters->start     = 0;
+    parameters->current   = 0;
+}
 
 
 bool
-is_at_end()
+is_at_end(struct Parameters *parameters)
 {
+    char *source   = parameters->source;
+    size_t current = parameters->current;
+
     if (source[current] == '\n') return true;
+
     return false;
 }
 
 
 char
-advance()
+advance(struct Parameters *parameters)
 {
-    current += 1;
+    parameters->current += 1;
+
+    size_t current = parameters->current;
+    char *source   = parameters->source;
+
     return source[current - 1];
 }
 
@@ -37,9 +60,9 @@ add_token(Token_type type)
 
 
 void
-scan_token()
+scan_token(struct Parameters *parameters)
 {
-    char c = advance();
+    char c = advance(parameters);
 
     switch (c) {
         case ';': add_token(SEMICOLON); break;
@@ -55,14 +78,15 @@ scan_token()
 Token *
 tokenize(char *input)
 {
-    source = input;
+    struct Parameters parameters;
+    init_parameters(&parameters, input);
 
-    while (!is_at_end()) {
-        start = current;
-        scan_token(source, &start, &current, &tokens, &cur_index);
+    while (!is_at_end(&parameters)) {
+        parameters.start = parameters.current;
+        scan_token(&parameters);
     }
 
     // add last token of type `NIL`
 
-    return tokens;
+    return parameters.tokens;
 }
