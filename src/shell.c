@@ -14,12 +14,16 @@ run(char *line)
 }
 
 
-int
+void
 run_prompt(void)
 {
     while (1) {
         // display_prompt();
         char *line = read_from_stdin();
+
+        /* Line reading fails, just retry */
+        if (line == NULL) continue;                
+
         run(line);
         free(line);
     }
@@ -29,7 +33,8 @@ run_prompt(void)
 int
 run_script(char *filepath)
 {
-    
+    fprintf(stderr, "Scripting is not supported as of yet.\n");
+    return -1;
 }
 
 
@@ -48,7 +53,7 @@ init_shell(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     else if (argc == 1) {
-        return_val = run_prompt();
+        run_prompt();
     }
 
     if (return_val == -1) return EXIT_FAILURE;

@@ -11,5 +11,7 @@ read_from_stdin(void)
 
     ssize_t line_len = getline(&line, &n, stdin);
 
+    if (line_len == -1) return NULL;
+
     return line;
 }
