@@ -4,7 +4,7 @@
 #include "token.h"
 
 
-Token *tokenize(char *source);
+Token *tokenize(char *input);
 
 
 #endif

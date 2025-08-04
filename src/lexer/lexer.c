@@ -5,38 +5,41 @@
 #include "token.h"
 
 
+Token *tokens = NULL;
+size_t cur_index = 0;
+
+char *source = NULL;
+size_t start = 0;
+size_t current = 0;
+
 
 bool
-is_at_end(char *source, size_t current)
+is_at_end()
 {
     if (source[current] == '\n') return true;
-
     return false;
 }
 
 
 char
-advance(char *source, size_t *current)
+advance()
 {
-    *current += 1;
-
-    return source[(*current) - 1];
+    current += 1;
+    return source[current - 1];
 }
 
 
 void
-add_token(char *source, size_t *start, size_t *current,
-          Token **tokens, size_t *cur_index)
+add_token(Token_type type)
 {
 
 }
 
 
 void
-scan_token(char *source, size_t *start, size_t *current, 
-           Token **tokens, size_t *cur_index)
+scan_token()
 {
-    char c = advance(source, current);
+    char c = advance();
 
     switch (c) {
         case ';': add_token(SEMICOLON); break;
@@ -50,15 +53,11 @@ scan_token(char *source, size_t *start, size_t *current,
  * @return: An array of type `Token`; last element is type `NIL`
  */
 Token *
-tokenize(char *source)
+tokenize(char *input)
 {
-    Token *tokens = NULL;
-    size_t cur_index = 0;
+    source = input;
 
-    size_t start = 0;
-    size_t current = 0;
-
-    while (!is_at_end(source, current)) {
+    while (!is_at_end()) {
         start = current;
         scan_token(source, &start, &current, &tokens, &cur_index);
     }
