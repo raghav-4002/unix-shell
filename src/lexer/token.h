@@ -33,8 +33,7 @@ typedef struct Token
 {
     Token_type type;
 
-    char **argv;  /* default `NULL` for non-`COMMAND` tokens */
-    size_t argc;  /* default `0` for non-`COMMAND` tokens */
+    char *arg;  /* default `NULL` for non-`COMMAND` tokens */
 
     Return_status return_status;  /* default `UNDEFINED` */
 

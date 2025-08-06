@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "lexer.h"
 #include "token.h"
@@ -17,6 +18,7 @@ struct Parameters
 
 
 /* ==================== Helper Functions ==================== */
+
 
 void
 init_parameters(struct Parameters *parameters, char *input)
@@ -69,6 +71,38 @@ match(struct Parameters *parameters, char expected)
 }
 
 
+char *
+create_substring(char *string, size_t start, size_t end)
+{
+    size_t buf_size = (end - start) + 1; /* `+1` for null-byte */
+
+    /* Dynamicllay allocating as contents should persist */
+    char *substring = malloc(buf_size * sizeof(*substring));
+
+    /* Update string to be the new substring */
+    string = &string[start];
+    string[end] = '\0';
+
+    strncpy(substring, string, buf_size);
+
+    return substring;
+}
+
+
+/* ==================== Actual tokenization ==================== */
+
+
+void
+add_arg(struct Parameters *parameters)
+{
+    char *string = parameters->source;
+    size_t start = parameters->start;
+    size_t end   = parameters->current;
+
+    parameters->tokens->arg = create_substring(string, start, end);
+}
+
+
 void
 add_token(struct Parameters *parameters, Token_type type)
 {
@@ -80,14 +114,36 @@ add_token(struct Parameters *parameters, Token_type type)
 
     /* Initialize with default values */
     tokens[cur_index].type          = type;
-    tokens[cur_index].argv          = NULL;
-    tokens[cur_index].argc          = 0;
+    tokens[cur_index].arg           = NULL;
     tokens[cur_index].return_status = UNDEFINED;
 
-    if (!parameters->tokens) {
+    /* 
+     * Necessary, otherwise `parameters->tokens` would
+     * always remain `NULL`
+     */
+    if (cur_index == 0) {
         parameters->tokens = tokens;
     }
+
+    if (type == COMMAND) {
+        add_arg(parameters);
+    }
+    
     parameters->cur_index++;
+}
+
+
+void
+command(struct Parameters *parameters)
+{
+    while (!match(parameters, ' ') && !match(parameters, '\n')
+           && !match(parameters, ';') && !match(parameters, '&')
+           && !match(parameters, '|')) {
+
+        advance(parameters);
+    }
+
+    add_token(parameters, COMMAND);
 }
 
 
@@ -99,6 +155,9 @@ scan_token(struct Parameters *parameters)
     switch (c) {
         /* Single character tokens */
         case ';': add_token(parameters, SEMICOLON); break;
+
+        /* Skip space character */
+        case ' ': case '\t': break;
 
         /* Double character tokens */
         case '|': 
@@ -117,6 +176,11 @@ scan_token(struct Parameters *parameters)
             else {
                 add_token(parameters, BG_OPERATOR);
             }
+            break;
+
+        /* Command tokens */
+        defalut:
+            command(parameters);
             break;
     }
 }
