@@ -16,6 +16,8 @@ struct Parameters
 };
 
 
+/* ==================== Helper Functions ==================== */
+
 void
 init_parameters(struct Parameters *parameters, char *input)
 {
@@ -52,10 +54,30 @@ advance(struct Parameters *parameters)
 }
 
 
-void
-add_token(Token_type type)
+bool
+match(char expected)
 {
 
+}
+
+
+void
+add_token(struct Parameters *parameters, Token_type type)
+{
+    Token *tokens    = parameters->tokens;
+    size_t cur_index = parameters->cur_index;
+
+    /* Resize array */
+    tokens = realloc(tokens, (cur_index + 1) * sizeof(*tokens));
+
+    /* Initialize with default values */
+    tokens[cur_index].type          = type;
+    tokens[cur_index].argv          = NULL;
+    tokens[cur_index].argc          = 0;
+    tokens[cur_index].return_status = UNDEFINED;
+
+    parameters->tokens = tokens;
+    parameters->cur_index++;
 }
 
 
@@ -65,7 +87,19 @@ scan_token(struct Parameters *parameters)
     char c = advance(parameters);
 
     switch (c) {
-        case ';': add_token(SEMICOLON); break;
+        case ';': add_token(parameters, SEMICOLON); break;
+
+        case '|': 
+            if (match('|')) add_token(parameters, LOGIC_OR);
+            else add_token(parameters, PIPE);
+            break;
+
+        case '&':
+            if (match('&')) add_token(parameters, LOGIC_AND);
+            else add_token(parameters, BG_OPERATOR);
+            break;
+
+        
     }
 }
 
@@ -86,7 +120,8 @@ tokenize(char *input)
         scan_token(&parameters);
     }
 
-    // add last token of type `NIL`
+    /* Add `NIL` as last token */
+    add_token(&parameters, NIL);
 
     return parameters.tokens;
 }
