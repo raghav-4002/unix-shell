@@ -55,9 +55,17 @@ advance(struct Parameters *parameters)
 
 
 bool
-match(char expected)
+match(struct Parameters *parameters, char expected)
 {
+    char *source   = parameters->source;
+    size_t current = parameters->current;
 
+    if (source[current] == expected) {
+        advance(parameters);  /* increment `current` by 1 */
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -76,7 +84,9 @@ add_token(struct Parameters *parameters, Token_type type)
     tokens[cur_index].argc          = 0;
     tokens[cur_index].return_status = UNDEFINED;
 
-    parameters->tokens = tokens;
+    if (!parameters->tokens) {
+        parameters->tokens = tokens;
+    }
     parameters->cur_index++;
 }
 
@@ -87,19 +97,27 @@ scan_token(struct Parameters *parameters)
     char c = advance(parameters);
 
     switch (c) {
+        /* Single character tokens */
         case ';': add_token(parameters, SEMICOLON); break;
 
+        /* Double character tokens */
         case '|': 
-            if (match('|')) add_token(parameters, LOGIC_OR);
-            else add_token(parameters, PIPE);
+            if (match(parameters, '|')) {
+                add_token(parameters, LOGIC_OR);
+            }
+            else {
+                add_token(parameters, PIPE);
+            }
             break;
 
         case '&':
-            if (match('&')) add_token(parameters, LOGIC_AND);
-            else add_token(parameters, BG_OPERATOR);
+            if (match(parameters, '&')) {
+                add_token(parameters, LOGIC_AND);
+            }
+            else {
+                add_token(parameters, BG_OPERATOR);
+            }
             break;
-
-        
     }
 }
 
