@@ -1,6 +1,7 @@
 #ifndef LEXER_HELPER_
 #define LEXER_HELPER_
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include "token.h"
 
@@ -17,7 +18,7 @@ struct Parameters
 
 
 void init_parameters(struct Parameters *parameters, char *input);
-bool is_at_end(struct Parameters *parameters);
+bool current_is_at_end(struct Parameters *parameters);
 char advance(struct Parameters *parameters);
 bool match(struct Parameters *parameters, char expected);
 void init_token(Token *token, Token_type type);

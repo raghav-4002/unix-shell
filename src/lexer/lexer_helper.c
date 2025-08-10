@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 
 #include "lexer_helper.h"
@@ -15,18 +16,26 @@ init_parameters(struct Parameters *parameters, char *input)
 }
 
 
+/*
+ * @brief : Tells whether `current` points at the end ('\0')
+ * @return: `true`, if yes
+ */
 bool
-is_at_end(struct Parameters *parameters)
+current_is_at_end(struct Parameters *parameters)
 {
     char *source   = parameters->source;
     size_t current = parameters->current;
 
-    if (source[current] == '\n') return true;
+    if (source[current] == '\0') return true;
 
     return false;
 }
 
 
+/* 
+ * @brief : Advances `current`
+ * @reutrn: Character previous to `current`
+ */
 char
 advance(struct Parameters *parameters)
 {

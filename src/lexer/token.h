@@ -1,8 +1,6 @@
 #ifndef TOKENS_H_
 #define TOKENS_H_
 
-#include <stdlib.h>
-
 
 typedef enum Token_type
 {
@@ -25,10 +23,7 @@ typedef enum Return_status
 } Return_status;
 
 
-/*
- * Definition of tokens that will be created by the
- * lexer and used by the parser to construct an AST.
- */
+/* Actual `Token` datastructure */
 typedef struct Token 
 {
     Token_type type;

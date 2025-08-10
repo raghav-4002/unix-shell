@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 #include "lexer.h"
 #include "token.h"
@@ -70,8 +71,8 @@ scan_token(struct Parameters *parameters)
         /* Single character tokens */
         case ';': add_token(parameters, SEMICOLON); break;
 
-        /* Skip space character */
-        case ' ': case '\t': break;
+        /* Skip white spaces */
+        case ' ': case '\t': case '\n': break;
 
         /* Double character tokens */
         case '|': 
@@ -108,17 +109,19 @@ scan_token(struct Parameters *parameters)
 Token *
 tokenize(char *input)
 {
+    assert(*input != '\n');
     /*
      * Structure consisting of `parameters`
      * like array of `Token`, the source string 
      * to be tokenized, current and starting 
-     * index of the string that is being considered.
+     * index of the source string .
      * This allows avoidance of global variables.
      */
     struct Parameters parameters;
     init_parameters(&parameters, input);
 
-    while (!is_at_end(&parameters)) {
+    while (!current_is_at_end(&parameters)) {
+        /* Move to the next lexeme */
         parameters.start = parameters.current;
         scan_token(&parameters);
     }
