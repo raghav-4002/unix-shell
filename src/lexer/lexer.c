@@ -11,9 +11,9 @@
 void
 add_arg(struct Parameters *parameters)
 {
-    char *string = parameters->source;
-    size_t start = parameters->start;
-    size_t end   = parameters->current;
+    char  *string = parameters->source;
+    size_t start  = parameters->start;
+    size_t end    = parameters->current;
 
     parameters->tokens->arg = create_substring(string, start, end);
 }
@@ -22,17 +22,18 @@ add_arg(struct Parameters *parameters)
 void
 add_token(struct Parameters *parameters, Token_type type)
 {
-    Token *tokens    = parameters->tokens;
+    Token *tokens = parameters->tokens;
 
     /* Add space for one more token */
     parameters->arr_size += 1;
-    size_t arr_size  = parameters->arr_size;
-    size_t cur_index = arr_size - 1;
+    size_t arr_size       = parameters->arr_size;
+    size_t cur_index      = arr_size - 1;
 
     /* Resize array */
     tokens = realloc(tokens, arr_size * sizeof(*tokens));
 
-    init_token(&tokens[cur_index], type);
+    Token cur_token = tokens[cur_index];
+    init_token(&cur_token, type);
 
     /* 
      * Necessary, otherwise `parameters->tokens` would
@@ -51,7 +52,9 @@ add_token(struct Parameters *parameters, Token_type type)
 void
 command(struct Parameters *parameters)
 {
+    /* Move current ahead, until any of the recognised lexeme is not found */
     while (!match(parameters, ' ') && !match(parameters, '\n')
+           && !match(parameters, '\t') && !match(parameters, '\0')
            && !match(parameters, ';') && !match(parameters, '&')
            && !match(parameters, '|')) {
 
@@ -109,7 +112,6 @@ scan_token(struct Parameters *parameters)
 Token *
 tokenize(char *input)
 {
-    assert(*input != '\n');
     /*
      * Structure consisting of `parameters`
      * like array of `Token`, the source string 
@@ -128,6 +130,7 @@ tokenize(char *input)
 
     /* Add `NIL` as last token */
     add_token(&parameters, NIL);
+    assert(parameters.tokens != NULL);
 
     return parameters.tokens;
 }

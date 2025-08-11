@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "lexer_helper.h"
 
@@ -34,7 +35,7 @@ current_is_at_end(struct Parameters *parameters)
 
 /* 
  * @brief : Advances `current`
- * @reutrn: Character previous to `current`
+ * @return: Character previous to `current`
  */
 char
 advance(struct Parameters *parameters)
@@ -42,7 +43,7 @@ advance(struct Parameters *parameters)
     parameters->current += 1;
 
     size_t current = parameters->current;
-    char *source   = parameters->source;
+    char  *source  = parameters->source;
 
     return source[current - 1];
 }
@@ -72,19 +73,27 @@ init_token(Token *token, Token_type type)
 }
 
 
+/*
+ * @brief : Creates a substring from a given string
+ * @param : Pointer to original string, starting and terminating index of
+ *          substring
+ * @return: A `malloc`d array of substring
+ */
 char *
 create_substring(char *string, size_t start, size_t end)
 {
-    size_t buf_size = (end - start) + 1; /* `+1` for null-byte */
+    assert(end > start);
+    assert(string != NULL);
+    size_t len = strlen(string);
+    assert(end <= len);
 
-    /* Dynamicllay allocating as contents should persist */
+    /* Add `1` for null-byte */
+    size_t buf_size = (end - start) + 1;
     char *substring = malloc(buf_size * sizeof(*substring));
 
-    /* Update string to be the new substring */
-    string = &string[start];
-    string[end] = '\0';
-
-    strncpy(substring, string, buf_size);
+    string += start;  /* `string` ptr points to start of substring */
+    memcpy(substring, string, buf_size - 1);
+    substring[buf_size - 1] = '\0';
 
     return substring;
 }
