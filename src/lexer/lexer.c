@@ -8,7 +8,7 @@
 #include "lexer_helper.h"
 
 
-void
+int
 add_arg(struct Parameters *parameters)
 {
     char  *string = parameters->source;
@@ -16,10 +16,14 @@ add_arg(struct Parameters *parameters)
     size_t end    = parameters->current;
 
     parameters->tokens->arg = create_substring(string, start, end);
+
+    if (!parameters->tokens->arg) return -1;
+
+    return 0;
 }
 
 
-void
+int
 add_token(struct Parameters *parameters, Token_type type)
 {
     Token *tokens = parameters->tokens;
@@ -31,6 +35,11 @@ add_token(struct Parameters *parameters, Token_type type)
 
     /* Resize array */
     tokens = realloc(tokens, arr_size * sizeof(*tokens));
+
+    if (!tokens) {
+        parameters->arr_size -= 1;  /* reset array size */
+        return -1;
+    }
 
     Token cur_token = tokens[cur_index];
     init_token(&cur_token, type);
@@ -44,12 +53,14 @@ add_token(struct Parameters *parameters, Token_type type)
     }
 
     if (type == COMMAND) {
-        add_arg(parameters);
+        if (add_arg(parameters) == -1) return -1;
     }
+
+    return 0;
 }
 
 
-void
+int
 command(struct Parameters *parameters)
 {
     /* Move current ahead, until any of the recognised lexeme is not found */
@@ -61,18 +72,22 @@ command(struct Parameters *parameters)
         advance(parameters);
     }
 
-    add_token(parameters, COMMAND);
+    int err_return = add_token(parameters, COMMAND);
+
+    return err_return;
 }
 
 
-void
+int
 scan_token(struct Parameters *parameters)
 {
     char c = advance(parameters);
 
+    int err_return = 0;
+
     switch (c) {
         /* Single character tokens */
-        case ';': add_token(parameters, SEMICOLON); break;
+        case ';': err_return = add_token(parameters, SEMICOLON); break;
 
         /* Skip white spaces */
         case ' ': case '\t': case '\n': break;
@@ -80,27 +95,31 @@ scan_token(struct Parameters *parameters)
         /* Double character tokens */
         case '|': 
             if (match(parameters, '|')) {
-                add_token(parameters, LOGIC_OR);
+                err_return = add_token(parameters, LOGIC_OR);
             }
             else {
-                add_token(parameters, PIPE);
+                err_return = add_token(parameters, PIPE);
             }
             break;
 
         case '&':
             if (match(parameters, '&')) {
-                add_token(parameters, LOGIC_AND);
+                err_return = add_token(parameters, LOGIC_AND);
             }
             else {
-                add_token(parameters, BG_OPERATOR);
+                err_return = add_token(parameters, BG_OPERATOR);
             }
             break;
 
         /* Command tokens */
         defalut:
-            command(parameters);
+            err_return = command(parameters);
             break;
     }
+
+    if (err_return == -1) return -1;
+
+    return 0;
 }
 
 
@@ -108,6 +127,7 @@ scan_token(struct Parameters *parameters)
  * @brief : Tokenizes an input string; stops when encounters `\0`
  * @param : An input string
  * @return: An array of type `Token`; last element is type `NIL`
+ *          `NULL` on failure
  */
 Token *
 tokenize(char *input)
@@ -122,14 +142,20 @@ tokenize(char *input)
     struct Parameters parameters;
     init_parameters(&parameters, input);
 
+    int err_return = 0;
+
     while (!current_is_at_end(&parameters)) {
         /* Move to the next lexeme */
         parameters.start = parameters.current;
-        scan_token(&parameters);
+        err_return = scan_token(&parameters);
+
+        if (err_return == -1) return NULL;
     }
 
     /* Add `NIL` as last token */
-    add_token(&parameters, NIL);
+    err_return = add_token(&parameters, NIL);
+    if (err_return == -1) return NULL;
+
     assert(parameters.tokens != NULL);
 
     return parameters.tokens;

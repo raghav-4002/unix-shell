@@ -82,6 +82,7 @@ init_token(Token *token, Token_type type)
 char *
 create_substring(char *string, size_t start, size_t end)
 {
+    /* Assertions */
     assert(end > start);
     assert(string != NULL);
     size_t len = strlen(string);
@@ -90,6 +91,8 @@ create_substring(char *string, size_t start, size_t end)
     /* Add `1` for null-byte */
     size_t buf_size = (end - start) + 1;
     char *substring = malloc(buf_size * sizeof(*substring));
+
+    if (!substring) return NULL;
 
     string += start;  /* `string` ptr points to start of substring */
     memcpy(substring, string, buf_size - 1);
