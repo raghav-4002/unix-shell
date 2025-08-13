@@ -41,8 +41,8 @@ add_token(struct Parameters *parameters, Token_type type)
         return -1;
     }
 
-    Token cur_token = tokens[cur_index];
-    init_token(&cur_token, type);
+    Token *cur_token = &tokens[cur_index];
+    init_token(cur_token, type);
 
     /* 
      * Necessary, otherwise `parameters->tokens` would
@@ -137,7 +137,8 @@ tokenize(char *input)
      * like array of `Token`, the source string 
      * to be tokenized, current and starting 
      * index of the source string .
-     * This allows avoidance of global variables.
+     * This allows avoidance of global variables
+     * because globals bad ;)
      */
     struct Parameters parameters;
     init_parameters(&parameters, input);
@@ -147,7 +148,7 @@ tokenize(char *input)
     while (!current_is_at_end(&parameters)) {
         /* Move to the next lexeme */
         parameters.start = parameters.current;
-        err_return = scan_token(&parameters);
+        err_return       = scan_token(&parameters);
 
         if (err_return == -1) return NULL;
     }
