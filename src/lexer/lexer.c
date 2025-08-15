@@ -87,13 +87,15 @@ scan_token(struct Parameters *parameters)
 
     switch (c) {
         /* Single character tokens */
-        case ';': err_return = add_token(parameters, SEMICOLON); break;
+        case ';':
+            err_return = add_token(parameters, SEMICOLON);
+            break;
 
-        /* Skip white spaces */
-        case ' ': case '\t': case '\n': break;
+        case ' ': case '\n': case '\t':
+            break;
 
-        /* Double character tokens */
-        case '|': 
+        /* Double/single character tokens */
+        case '|':
             if (match(parameters, '|')) {
                 err_return = add_token(parameters, LOGIC_OR);
             }
@@ -112,7 +114,7 @@ scan_token(struct Parameters *parameters)
             break;
 
         /* Command tokens */
-        defalut:
+        default:
             err_return = command(parameters);
             break;
     }

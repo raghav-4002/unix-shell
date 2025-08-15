@@ -55,7 +55,7 @@ match(struct Parameters *parameters, char expected)
     char *source   = parameters->source;
     size_t current = parameters->current;
 
-    if (source[current] == expected) {
+    if (source[current + 1] == expected) {
         advance(parameters);  /* increment `current` by 1 */
         return true;
     }
