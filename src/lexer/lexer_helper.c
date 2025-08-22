@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "lexer_helper.h"
+#include "../utils.h"
 
 
 void
@@ -99,4 +100,14 @@ create_substring(char *string, size_t start, size_t end)
     substring[buf_size - 1] = '\0';
 
     return substring;
+}
+
+
+void
+handle_error(struct Parameters *parameters)
+{
+    Token *tokens = parameters->tokens;
+    size_t tokens_count = parameters->arr_size - 1;
+
+    free_tokens(tokens, tokens_count);
 }

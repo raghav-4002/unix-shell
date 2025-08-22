@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <assert.h>
 
 #include "lexer.h"
 #include "token.h"
@@ -18,7 +17,7 @@ add_arg(struct Parameters *parameters)
 
     parameters->tokens[cur_index].arg = create_substring(string, start, end);
 
-    if (!parameters->tokens->arg) return -1;
+    if (!parameters->tokens[cur_index].arg) return -1;
 
     return 0;
 }
@@ -137,24 +136,32 @@ tokenize(char *input)
      * This allows avoidance of global variables
      * because globals bad ;)
      */
-    struct Parameters parameters;
-    init_parameters(&parameters, input);
+    struct Parameters *parameters = malloc(sizeof(*parameters));
+
+    if (parameters == NULL) return NULL;
+
+    init_parameters(parameters, input);
 
     int err_return = 0;
 
-    while (!current_is_at_end(&parameters)) {
+    while (!current_is_at_end(parameters)) {
         /* Move to the next lexeme */
-        parameters.start = parameters.current;
-        err_return       = scan_token(&parameters);
+        parameters->start = parameters->current;
+        err_return       = scan_token(parameters);
 
-        if (err_return == -1) return NULL;
+        if (err_return == -1) {
+            handle_error(parameters);
+            return NULL;
+        }
     }
 
     /* Add `NIL` as last token */
-    err_return = add_token(&parameters, NIL);
-    if (err_return == -1) return NULL;
+    err_return = add_token(parameters, NIL);
 
-    assert(parameters.tokens != NULL);
+    if (err_return == -1) {
+        handle_error(parameters);
+        return NULL;
+    }
 
-    return parameters.tokens;
+    return parameters->tokens;
 }
