@@ -11,11 +11,12 @@
 int
 add_arg(struct Parameters *parameters)
 {
-    char  *string = parameters->source;
-    size_t start  = parameters->start;
-    size_t end    = parameters->current;
+    char  *string    = parameters->source;
+    size_t start     = parameters->start;
+    size_t end       = parameters->current;
+    size_t cur_index = parameters->arr_size - 1;
 
-    parameters->tokens->arg = create_substring(string, start, end);
+    parameters->tokens[cur_index].arg = create_substring(string, start, end);
 
     if (!parameters->tokens->arg) return -1;
 
@@ -44,13 +45,7 @@ add_token(struct Parameters *parameters, Token_type type)
     Token *cur_token = &tokens[cur_index];
     init_token(cur_token, type);
 
-    /* 
-     * Necessary, otherwise `parameters->tokens` would
-     * always remain `NULL`
-     */
-    if (!parameters->tokens) {
-        parameters->tokens = tokens;
-    }
+    parameters->tokens = tokens;
 
     if (type == COMMAND) {
         if (add_arg(parameters) == -1) return -1;
