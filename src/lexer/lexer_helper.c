@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "lexer_helper.h"
 #include "../utils.h"
@@ -50,6 +49,10 @@ advance(struct Parameters *parameters)
 }
 
 
+/* 
+ * Returns `true` if the next char to `current` is `expected`.
+ * Else returns `false`.
+ */
 bool
 match(struct Parameters *parameters, char expected)
 {
@@ -65,6 +68,7 @@ match(struct Parameters *parameters, char expected)
 }
 
 
+/* Initializes a `token` with default values. */
 void
 init_token(Token *token, Token_type type)
 {
@@ -76,19 +80,13 @@ init_token(Token *token, Token_type type)
 
 /*
  * @brief : Creates a substring from a given string
- * @param : Pointer to original string, starting and terminating index of
+ * @param : Pointer to original string; starting and terminating index of
  *          substring
  * @return: A `malloc`d array of substring
  */
 char *
 create_substring(char *string, size_t start, size_t end)
 {
-    /* Assertions */
-    assert(end > start);
-    assert(string != NULL);
-    size_t len = strlen(string);
-    assert(end <= len);
-
     /* Add `1` for null-byte */
     size_t buf_size = (end - start) + 1;
     char *substring = malloc(buf_size * sizeof(*substring));
@@ -103,10 +101,14 @@ create_substring(char *string, size_t start, size_t end)
 }
 
 
+/*
+ * @brief : Frees memory allocated to tokens if error occurs.
+ * @param : A pointer to `struct Parameters`.
+ */
 void
-handle_error(struct Parameters *parameters)
+free_tokens_on_error(struct Parameters *parameters)
 {
-    Token *tokens = parameters->tokens;
+    Token *tokens       = parameters->tokens;
     size_t tokens_count = parameters->arr_size - 1;
 
     free_tokens(tokens, tokens_count);

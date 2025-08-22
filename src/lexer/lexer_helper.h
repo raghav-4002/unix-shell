@@ -24,7 +24,7 @@ char advance(struct Parameters *parameters);
 bool match(struct Parameters *parameters, char expected);
 void init_token(Token *token, Token_type type);
 char *create_substring(char *string, size_t start, size_t end);
-void handle_error(struct Parameters *parameters);
+void free_tokens_on_error(struct Parameters *parameters);
 
 
 #endif // LEXER_HELPER_

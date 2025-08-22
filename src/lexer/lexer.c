@@ -7,6 +7,12 @@
 #include "lexer_helper.h"
 
 
+/*
+ * @brief : Adds literal value of argument into token
+            of type `COMMAND`.
+ * @param : A pointer to `struct Parameters`.
+ * @return: `0` on success; `-1` on failure.
+ */
 int
 add_arg(struct Parameters *parameters)
 {
@@ -23,6 +29,12 @@ add_arg(struct Parameters *parameters)
 }
 
 
+/*
+ * @brief : Adds a token into `tokens` array.
+ * @param : A pointer to `struct Parameters`.
+            `Token_type` enum Member.
+ * @return: `0` on success; `-1` on failure.
+ */
 int
 add_token(struct Parameters *parameters, Token_type type)
 {
@@ -54,6 +66,11 @@ add_token(struct Parameters *parameters, Token_type type)
 }
 
 
+/*
+ * @brief : Tokenizes a lexeme of type `COMMAND`.
+ * @param : A pointer to `struct Parameters`.
+ * @return: `0` on success; `-1` on failure.
+ */
 int
 command(struct Parameters *parameters)
 {
@@ -72,6 +89,11 @@ command(struct Parameters *parameters)
 }
 
 
+/*
+ * @brief : Recognises the current lexeme.
+ * @param : A pointer to `struct Parameters`.
+ * @return: `0` on success; `-1` on failure
+ */
 int
 scan_token(struct Parameters *parameters)
 {
@@ -111,8 +133,8 @@ scan_token(struct Parameters *parameters)
         default:
             err_return = command(parameters);
             break;
-    }
 
+    }
     if (err_return == -1) return -1;
 
     return 0;
@@ -129,12 +151,18 @@ Token *
 tokenize(char *input)
 {
     /*
-     * Structure consisting of `parameters`
-     * like array of `Token`, the source string 
-     * to be tokenized, current and starting 
-     * index of the source string .
-     * This allows avoidance of global variables
-     * because globals bad ;)
+     * A pointer to structure `Parameters`
+     
+     * Members of `struct Parameters`
+
+     * `Token *tokens`  : a pointer to an array of tokens.
+     * `size_t arr_size`: represents size of the tokens array.
+
+     * `char *source`   : source string to be tokenized.
+     * `size_t start`   : an index pointing to the head of the 
+                          lexeme being considered.
+     * `size_t current` : an index pointing to the current character
+                          being considered.
      */
     struct Parameters *parameters = malloc(sizeof(*parameters));
 
@@ -147,10 +175,10 @@ tokenize(char *input)
     while (!current_is_at_end(parameters)) {
         /* Move to the next lexeme */
         parameters->start = parameters->current;
-        err_return       = scan_token(parameters);
+        err_return        = scan_token(parameters);
 
         if (err_return == -1) {
-            handle_error(parameters);
+            free_tokens_on_error(parameters);
             return NULL;
         }
     }
@@ -159,7 +187,7 @@ tokenize(char *input)
     err_return = add_token(parameters, NIL);
 
     if (err_return == -1) {
-        handle_error(parameters);
+        free_tokens_on_error(parameters);
         return NULL;
     }
 
