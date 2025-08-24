@@ -80,7 +80,7 @@ command(struct Parameters *parameters)
            && !match(parameters, ';') && !match(parameters, '&')
            && !match(parameters, '|')) {
 
-        advance(parameters);
+        advance_current(parameters);
     }
 
     int err_return = add_token(parameters, COMMAND);
@@ -97,7 +97,7 @@ command(struct Parameters *parameters)
 int
 scan_token(struct Parameters *parameters)
 {
-    char c = advance(parameters);
+    char c = advance_current(parameters);
 
     int err_return = 0;
 
@@ -113,6 +113,7 @@ scan_token(struct Parameters *parameters)
         /* Double/single character tokens */
         case '|':
             if (match(parameters, '|')) {
+                advance_current(parameters);
                 err_return = add_token(parameters, LOGIC_OR);
             }
             else {
@@ -122,6 +123,7 @@ scan_token(struct Parameters *parameters)
 
         case '&':
             if (match(parameters, '&')) {
+                advance_current(parameters);
                 err_return = add_token(parameters, LOGIC_AND);
             }
             else {
@@ -135,6 +137,7 @@ scan_token(struct Parameters *parameters)
             break;
 
     }
+
     if (err_return == -1) return -1;
 
     return 0;

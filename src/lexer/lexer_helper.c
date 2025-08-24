@@ -38,7 +38,7 @@ current_is_at_end(struct Parameters *parameters)
  * @return: Character previous to `current`
  */
 char
-advance(struct Parameters *parameters)
+advance_current(struct Parameters *parameters)
 {
     parameters->current += 1;
 
@@ -59,10 +59,7 @@ match(struct Parameters *parameters, char expected)
     char *source   = parameters->source;
     size_t current = parameters->current;
 
-    if (source[current + 1] == expected) {
-        advance(parameters);  /* increment `current` by 1 */
-        return true;
-    }
+    if (source[current] == expected) return true;
 
     return false;
 }
